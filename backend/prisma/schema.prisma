@@ -1,0 +1,128 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
+
+enum PerfilUsuario {
+    COLABORADOR
+    GESTOR
+    FINANCEIRO
+    ADMIN
+}
+
+// Ciclo de vida do reembolso 
+enum StatusSolicitacao {
+    RASCUNHO
+    ENVIADO
+    APROVADO
+    REJEITADO
+    PAGO
+    CANCELADO
+}
+
+// Nomes das ações salvas no log de auditoria
+enum AcaoHistorico {
+    CREATED
+    UPDATED
+    SUBMITTED
+    APPROVED
+    REJECTED
+    PAID
+    CANCELED
+}
+
+enum TipoArquivo {
+    PDF
+    JPG
+    PNG
+}
+
+// ─────────────────────────────────────────────
+// MODELS
+// ─────────────────────────────────────────────
+
+model Usuario {
+    id           String        @id @default(uuid())
+    nome         String
+    email        String        @unique
+    senha        String // Hash bcrypt, nunca em texto puro
+    perfil       PerfilUsuario
+    criadoEm     DateTime      @default(now())
+    atualizadoEm DateTime      @updatedAt
+
+    solicitacoes SolicitacaoReembolso[] @relation("SolicitacoesDoUsuario") // Relacionamento 1 para muitos com SolicitacaoReembolso
+    historicos   HistoricoSolicitacao[]
+
+    @@map("usuarios") // Tabela no banco de dados
+}
+
+model Categoria {
+    id           String   @id @default(uuid())
+    nome         String   @unique
+    ativo        Boolean  @default(true)
+    criadoEm     DateTime @default(now())
+    atualizadoEm DateTime @updatedAt
+
+    solicitacoes SolicitacaoReembolso[]
+
+    @@map("categorias")
+}
+
+model SolicitacaoReembolso {
+    id                    String            @id @default(uuid())
+    solicitanteId         String
+    categoriaId           String
+    descricao             String
+    valor                 Decimal           @db.Decimal(12, 2) // Para evitar erros de arredondamento com float
+    dataDespesa           DateTime          @db.Date
+    status                StatusSolicitacao @default(RASCUNHO)
+    justificativaRejeicao String? // Campo opcional, só preenchido se o reembolso for rejeitado
+    criadoEm              DateTime          @default(now())
+    atualizadoEm          DateTime          @updatedAt
+
+    solicitante Usuario                @relation("SolicitacoesDoUsuario", fields: [solicitanteId], references: [id]) // Liga o reembolso ao usuário que o criou
+    categoria   Categoria              @relation(fields: [categoriaId], references: [id])
+    anexos      Anexo[]
+    historicos  HistoricoSolicitacao[]
+
+    @@index([solicitanteId]) // Cria um índice na coluna solicitanteId para melhorar a performance das consultas
+    @@index([status])
+    @@map("solicitacoes_reembolso")
+}
+
+model HistoricoSolicitacao {
+    id            String        @id @default(uuid())
+    solicitacaoId String
+    usuarioId     String
+    acao          AcaoHistorico
+    observacao    String?
+    criadoEm      DateTime      @default(now())
+
+    solicitacao SolicitacaoReembolso @relation(fields: [solicitacaoId], references: [id], onDelete: Cascade)
+    usuario     Usuario              @relation(fields: [usuarioId], references: [id])
+
+    @@index([solicitacaoId])
+    @@map("historicos_solicitacao")
+}
+
+model Anexo {
+    id            String      @id @default(uuid())
+    solicitacaoId String
+    nomeArquivo   String
+    urlArquivo    String
+    tipoArquivo   TipoArquivo
+    criadoEm      DateTime    @default(now())
+
+    solicitacao SolicitacaoReembolso @relation(fields: [solicitacaoId], references: [id], onDelete: Cascade)
+
+    @@index([solicitacaoId])
+    @@map("anexos")
+}
