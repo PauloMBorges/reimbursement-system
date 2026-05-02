@@ -1,3 +1,5 @@
+// Config do ESLint integrado com Prettier e regras do TypeScript
+
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import prettierPlugin from 'eslint-plugin-prettier';
