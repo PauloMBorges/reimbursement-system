@@ -1,0 +1,214 @@
+{
+  "info": {
+    "_postman_id": "b5c0fbe2-badf-4ede-b105-c37be6f0cd6d",
+    "name": "Reimbursement API",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54474826",
+    "_collection_link": "https://go.postman.co/collection/54474826-b5c0fbe2-badf-4ede-b105-c37be6f0cd6d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Verifica que o login deu certo\r",
+                  "pm.test('Login bem-sucedido (status 200)', function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "// Salva o token no environment automaticamente\r",
+                  "if (pm.response.code === 200) {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.environment.set('token', data.token);\r",
+                  "    console.log('✅ Token salvo no environment');\r",
+                  "}\r",
+                  "\r",
+                  "// Valida estrutura da resposta\r",
+                  "pm.test('Resposta contém token e usuario', function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data).to.have.property('token');\r",
+                  "    pm.expect(data).to.have.property('usuario');\r",
+                  "    pm.expect(data.usuario).to.not.have.property('senha');\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"admin@pitang.com\",\r\n    \"senha\": \"senha123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "GET List Users (admin only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 quando admin autenticado', function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test('Resposta é um array', function () {\r",
+                  "    pm.expect(pm.response.json()).to.be.an('array');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test('Nenhum usuário expõe a senha', function () {\r",
+                  "    const usuarios = pm.response.json();\r",
+                  "    usuarios.forEach((u) => {\r",
+                  "        pm.expect(u).to.not.have.property('senha');\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Create User (admin only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 ao criar usuário', function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test('Resposta não contém senha', function () {\r",
+                  "    const usuario = pm.response.json();\r",
+                  "    pm.expect(usuario).to.not.have.property('senha');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test('Resposta contém id, nome, email e perfil', function () {\r",
+                  "    const usuario = pm.response.json();\r",
+                  "    pm.expect(usuario).to.have.property('id');\r",
+                  "    pm.expect(usuario).to.have.property('nome');\r",
+                  "    pm.expect(usuario).to.have.property('email');\r",
+                  "    pm.expect(usuario).to.have.property('perfil');\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nome\": \"Novo Colaborador\",\r\n    \"email\": \"novo.colaborador@empresa.com\",\r\n    \"senha\": \"senha123\",\r\n    \"perfil\": \"COLABORADOR\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
