@@ -10,14 +10,14 @@ app.use(express.json());
 
 // Rotas
 app.get('/health', (_req: Request, res: Response) => {
-    res.status(200).json({
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-    });
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
 });
 
-// Rotas da aplicação 
+// Rotas da aplicação
 
 // Middleware de erros
 app.use(errorMiddleware);
