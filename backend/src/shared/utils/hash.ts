@@ -1,3 +1,5 @@
+// hash.ts para DRY - não repetir código de hash (bcrypt.hash(...))
+
 import bcrypt from 'bcryptjs';
 import { env } from '@/config/env';
 

@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { PerfilUsuario } from '@prisma/client';
 
+// Antes de criar novo usuário, Zod pega a requisição e verifica se o Nome, Email, Senha e Perfil estão corretos
+
 export const createUserSchema = z.object({
   nome: z
     .string()
@@ -14,7 +16,7 @@ export const createUserSchema = z.object({
   senha: z
     .string()
     .min(6, 'Senha deve ter no mínimo 6 caracteres')
-    .max(72, 'Senha deve ter no máximo 72 caracterres'),
+    .max(72, 'Senha deve ter no máximo 72 caracterres'), // bcrypt tem limite de 72 bytes
   perfil: z.nativeEnum(PerfilUsuario),
 });
 
