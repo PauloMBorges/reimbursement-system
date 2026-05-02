@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { errorMiddleware } from '@/middlewares/error.middleware';
+import { authRoutes } from '@/modules/auth/auth.routes';
+import { usersRoutes } from '@/modules/users/users.routes';
 
 const app = express();
 
@@ -17,7 +19,8 @@ app.get('/health', (_req: Request, res: Response) => {
   });
 });
 
-// Rotas da aplicação
+app.use('/auth', authRoutes);
+app.use('/users', usersRoutes);
 
 // Middleware de erros
 app.use(errorMiddleware);
