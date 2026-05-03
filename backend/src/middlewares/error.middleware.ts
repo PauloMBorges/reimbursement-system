@@ -20,11 +20,18 @@ export const errorMiddleware: ErrorRequestHandler = (err, _req, res, _next) => {
 
   // 2. Erros de validação do Zod
   if (err instanceof ZodError) {
+    // Flatten permite transformar erros aninhados em um objeto único
+    const flattened = err.flatten();
     return res.status(400).json({
       message: 'Dados inválidos',
       statusCode: 400,
       error: 'Bad Request',
-      issues: err.flatten().fieldErrors,
+      issues: flattened.fieldErrors,
+      // formErrors captura erroes a nível do objeto inteiro
+      // como os gerados por .refine() no Zod
+      ...(flattened.formErrors.length > 0 && {
+        formErrors: flattened.formErrors,
+      }),
     });
   }
 
