@@ -109,7 +109,7 @@ function assertCanView(
   }
 }
 
-export const reimbursementService = {
+export const reimbursementsService = {
   // CRUD
 
   async create(user: ActingUser, input: CreateReimbursementInput) {
