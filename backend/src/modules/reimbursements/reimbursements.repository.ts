@@ -9,7 +9,7 @@ const defaultInclude = {
   solicitante: { select: { id: true, nome: true, email: true, perfil: true } },
 } satisfies Prisma.SolicitacaoReembolsoInclude;
 
-export const reimbursementRepository = {
+export const reimbursementsRepository = {
   // Busca uma linha específica pela chave primária (ID)
   async findById(id: string) {
     return prisma.solicitacaoReembolso.findUnique({
