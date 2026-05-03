@@ -22,7 +22,7 @@ router.use(authMiddleware);
 router.get('/', reimbursementsController.findMany);
 
 router.get(
-  ':/id',
+  '/:id',
   validate(reimbursementIdParamSchema, 'params'),
   reimbursementsController.findById,
 );
