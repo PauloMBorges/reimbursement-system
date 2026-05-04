@@ -326,6 +326,103 @@
       "name": "Reimbursements",
       "item": [
         {
+          "name": "History",
+          "item": [
+            {
+              "name": "GET History",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/reimbursements/{{reimbursementId}}/history",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reimbursements",
+                    "{{reimbursementId}}",
+                    "history"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Attachments",
+          "item": [
+            {
+              "name": "POST Create Attachment",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 201', function () {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "});\r",
+                      "\r",
+                      "if (pm.response.code === 201) {\r",
+                      "    const data = pm.response.json();\r",
+                      "    pm.environment.set('attachmentId', data.id);\r",
+                      "    console.log('✅ attachmentId salvo:', data.id);\r",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"nomeArquivo\": \"comprovante-almoco.pdf\",\r\n    \"urlArquivo\": \"https://fake-storage.com/uploads/comprovante-almoco.pdf\",\r\n    \"tipoArquivo\": \"PDF\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reimbursements/{{reimbursementId}}/attachments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reimbursements",
+                    "{{reimbursementId}}",
+                    "attachments"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET List Attachments",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/reimbursements/{{reimbursementId}}/attachments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reimbursements",
+                    "{{reimbursementId}}",
+                    "attachments"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
           "name": "POST Create",
           "event": [
             {
