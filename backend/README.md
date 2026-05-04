@@ -94,3 +94,44 @@ Todos os usuários abaixo são criados pelo seed e usam a senha **`senha123`**:
 | `npm run prisma:seed`    | Popula o banco com dados de teste                      |
 | `npm run prisma:studio`  | Abre o Prisma Studio (GUI do banco)                    |
 | `npm run prisma:reset`   | Reseta o banco (⚠️ apaga tudo)                         |
+
+## Testes
+
+A suite de testes usa **Jest + Supertest** com banco PostgreSQL isolado (`reimbursement_db_test`).
+
+### Configuração inicial (uma vez)
+
+Cria o banco de testes:
+
+```bash
+docker exec -it reimbursement-postgres psql -U postgres -c "CREATE DATABASE reimbursement_db_test;"
+```
+
+Aplica as migrations:
+
+```bash
+npm run test:setup
+```
+
+### Rodando os testes
+
+| Comando | O que faz |
+|---|---|
+| `npm test` | Roda todos os testes |
+| `npm run test:watch` | Modo watch (re-roda ao salvar) |
+| `npm run test:coverage` | Gera relatório de cobertura |
+| `npm run test:ci` | Setup + coverage em um comando (recomendado) |
+
+Após `npm run test:coverage`, o relatório HTML fica em `coverage/lcov-report/index.html`.
+
+### Cobertura
+
+A suite atual tem **36 testes** de integração distribuídos em 5 suites:
+
+- `auth.test.ts` (8) — login, validação Zod, middleware de autenticação
+- `categories.test.ts` (8) — CRUD com RBAC
+- `reimbursements.test.ts` (16) — CRUD, transições válidas/inválidas, RBAC, visibilidade
+- `integration-flow.test.ts` (2) — ciclos completos (aprovação e rejeição)
+- `smoke.test.ts` (2) — saúde da infraestrutura
+
+Os testes priorizam **comportamento observável** (status codes, payloads, persistência) sobre detalhes de implementação.

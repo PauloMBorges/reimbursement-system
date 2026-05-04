@@ -3,9 +3,11 @@ node_modules/
 
 # Variáveis de ambiente 
 .env
+.env.test
 .env.local
 .env.*.local
 !.env.example
+
 
 # Build outputs
 dist/
