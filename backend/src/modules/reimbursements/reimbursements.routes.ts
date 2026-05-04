@@ -9,6 +9,8 @@ import {
   updateReimbursementSchema,
 } from './reimbursements.schemas';
 import { reimbursementsController } from './reimbursements.controller';
+import { historyRoutes } from '@/modules/history/history.routes';
+import { attachmentsRoutes } from '@/modules/attachments/attachments.routes';
 
 const router = Router();
 
@@ -78,5 +80,9 @@ router.post(
   validate(reimbursementIdParamSchema, 'params'),
   reimbursementsController.cancel,
 );
+
+// Sub-rotas montadas em /reimbursements/:id/...
+router.use('/:id/history', historyRoutes);
+router.use('/:id/attachments', attachmentsRoutes);
 
 export { router as reimbursementsRoutes };
