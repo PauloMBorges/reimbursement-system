@@ -9,7 +9,7 @@ function getUser(req: Request) {
   return req.user;
 }
 
-export const historyControlelr = {
+export const historyController = {
   async findByReimbursementId(
     req: Request,
     res: Response,
