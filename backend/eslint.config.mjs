@@ -14,7 +14,7 @@ export default [
 
     // Configurações do projeto
     {
-        files: ['src/**/*.ts', 'prisma/**/*.ts'],
+        files: ['src/**/*.ts', 'prisma/**/*.ts', 'tests/**/*.ts'],
         languageOptions: {
             ecmaVersion: 2022,
             sourceType: 'module',
