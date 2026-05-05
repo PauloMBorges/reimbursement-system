@@ -14,3 +14,17 @@ export function useReimbursements() {
         queryFn: () => reimbursementsApi.list(),
     });
 }
+
+// Chave parametrizada por id
+// Cada reembolso tem seu proprio cache
+
+export const reimbursementQueryKey = (id: string) => ['reimbursements', id] as const;
+
+export function useReimbursement(id: string) {
+    return useQuery({
+        queryKey: reimbursementQueryKey(id),
+        queryFn: () => reimbursementsApi.getById(id),
+        // Só busca se id estiver definido (evitar query com id vazio)
+        enabled: !!id,
+    });
+}
