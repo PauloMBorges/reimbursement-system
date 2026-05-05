@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { PrivateRoute } from '@/components/shared/PrivateRoute';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { LoginPage } from '@/pages/Login';
 import { DashboardPage } from '@/pages/Dashboard';
 
@@ -14,7 +15,9 @@ export function AppRoutes() {
         path="/dashboard"
         element={
           <PrivateRoute>
-            <DashboardPage />
+            <AppLayout>
+              <DashboardPage />
+            </AppLayout>
           </PrivateRoute>
         }
       />

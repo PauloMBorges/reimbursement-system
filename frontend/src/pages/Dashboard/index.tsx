@@ -1,37 +1,37 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/contexts/useAuth';
+import { Loader2 } from 'lucide-react';
+import { useReimbursements } from '@/hooks/useReimbursements';
+import { ReimbursementsTable } from '@/components/shared/ReimbursementsTable';
+import { NewReimbursementButton } from '@/components/shared/NewReimbursementButton';
+import { getErrorMessage } from '@/api/http';
 
 export function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { data, isLoading, error } = useReimbursements();
 
   return (
-    <div className="min-h-screen bg-muted/30 p-4">
-      <div className="max-w-4xl mx-auto space-y-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Bem-vindo, {user?.nome}!</CardTitle>
-            <CardDescription>
-              Você está logado como{' '}
-              <span className="font-semibold">{user?.perfil}</span> ({user?.email})
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" onClick={logout}>
-              Sair
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Em construção</CardTitle>
-            <CardDescription>
-              A listagem de solicitações vai aparecer aqui depois.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Solicitações de Reembolso</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Acompanhe suas solicitações e aprovações
+          </p>
+        </div>
+        <NewReimbursementButton />
       </div>
+
+      {isLoading && (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      )}
+
+      {error && (
+        <div className="rounded-md border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+          {getErrorMessage(error)}
+        </div>
+      )}
+
+      {data && <ReimbursementsTable reimbursements={data} />}
     </div>
   );
 }
