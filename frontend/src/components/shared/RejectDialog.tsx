@@ -65,8 +65,8 @@ export function RejectDialog({
         <DialogHeader>
           <DialogTitle>Rejeitar solicitação</DialogTitle>
           <DialogDescription>
-            Informe o motivo da rejeição. Esta justificativa será registrada no
-            histórico e visível para o solicitante.
+            Informe o motivo da rejeição. Esta justificativa será registrada no histórico e visível
+            para o solicitante.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -78,9 +78,7 @@ export function RejectDialog({
               placeholder="Ex: Despesa não está dentro da política da empresa, faltam comprovantes, valor acima do permitido..."
               {...register('justificativa')}
             />
-            {errors.justificativa && (
-              <FieldError>{errors.justificativa.message}</FieldError>
-            )}
+            {errors.justificativa && <FieldError>{errors.justificativa.message}</FieldError>}
           </Field>
           <DialogFooter className="gap-2 sm:gap-2">
             <Button

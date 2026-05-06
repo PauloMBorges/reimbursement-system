@@ -39,54 +39,54 @@ export function ReimbursementActions({ reimbursement }: ReimbursementActionsProp
   // Wrappers que executam a mutation e tratam UI
   async function handleSubmit() {
     try {
-        await submit.mutateAsync(reimbursement.id);
-        toast.success('Solicitação enviada para aprovação');
-        closeDialog();
+      await submit.mutateAsync(reimbursement.id);
+      toast.success('Solicitação enviada para aprovação');
+      closeDialog();
     } catch (err) {
-        toast.error(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     }
   }
 
   async function handleApprove() {
     try {
-        await approve.mutateAsync(reimbursement.id);
-        toast.success('Solicitação aprovada');
-        closeDialog();
+      await approve.mutateAsync(reimbursement.id);
+      toast.success('Solicitação aprovada');
+      closeDialog();
     } catch (err) {
-        toast.error(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     }
   }
 
   async function handleReject(justificativa: string) {
     try {
-        await reject.mutateAsync({
-            id: reimbursement.id,
-            payload: { justificativa }
-        });
-        toast.success('Solicitação rejeitada');
-        closeDialog();
+      await reject.mutateAsync({
+        id: reimbursement.id,
+        payload: { justificativa },
+      });
+      toast.success('Solicitação rejeitada');
+      closeDialog();
     } catch (err) {
-        toast.error(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     }
   }
 
   async function handlePay() {
     try {
-        await pay.mutateAsync(reimbursement.id);
-        toast.success('Pagamento registrado');
-        closeDialog();
+      await pay.mutateAsync(reimbursement.id);
+      toast.success('Pagamento registrado');
+      closeDialog();
     } catch (err) {
-        toast.error(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     }
   }
 
   async function handleCancel() {
     try {
-        await cancel.mutateAsync(reimbursement.id);
-        toast.success('Solicitação cancelada');
-        closeDialog();
+      await cancel.mutateAsync(reimbursement.id);
+      toast.success('Solicitação cancelada');
+      closeDialog();
     } catch (err) {
-        toast.error(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     }
   }
 
@@ -99,12 +99,11 @@ export function ReimbursementActions({ reimbursement }: ReimbursementActionsProp
   const canReject = hasRole('GESTOR') && status === 'ENVIADO';
   const canPay = hasRole('FINANCEIRO') && status === 'APROVADO';
   const canCancel = isOwner && (status === 'RASCUNHO' || status === 'ENVIADO');
-  
-  // Se não há ação possível, não renderiza nada
-  const hasAnyAction = 
-    canSubmit || canEdit || canApprove || canReject || canPay || canCancel;
 
-  if (!hasAnyAction){
+  // Se não há ação possível, não renderiza nada
+  const hasAnyAction = canSubmit || canEdit || canApprove || canReject || canPay || canCancel;
+
+  if (!hasAnyAction) {
     return null;
   }
 
@@ -137,10 +136,7 @@ export function ReimbursementActions({ reimbursement }: ReimbursementActionsProp
         )}
 
         {canReject && (
-          <Button
-            variant="destructive"
-            onClick={() => setActiveDialog({ type: 'reject' })}
-          >
+          <Button variant="destructive" onClick={() => setActiveDialog({ type: 'reject' })}>
             <X className="h-4 w-4 mr-2" />
             Rejeitar
           </Button>
@@ -154,10 +150,7 @@ export function ReimbursementActions({ reimbursement }: ReimbursementActionsProp
         )}
 
         {canCancel && (
-          <Button
-            variant="outline"
-            onClick={() => setActiveDialog({ type: 'cancel' })}
-          >
+          <Button variant="outline" onClick={() => setActiveDialog({ type: 'cancel' })}>
             <Ban className="h-4 w-4 mr-2" />
             Cancelar
           </Button>

@@ -1,13 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { Timeline } from '@/components/shared/Timeline';
 import { AttachmentsList } from '@/components/shared/AttachmentsList';
@@ -29,10 +23,7 @@ export function ReimbursementDetailPage() {
     error: errorReimbursement,
   } = useReimbursement(id ?? '');
 
-  const {
-    data: history,
-    isLoading: isLoadingHistory,
-  } = useHistory(id ?? '');
+  const { data: history, isLoading: isLoadingHistory } = useHistory(id ?? '');
 
   // Loading da solicitação principal
   if (isLoadingReimbursement) {
@@ -47,19 +38,12 @@ export function ReimbursementDetailPage() {
   if (errorReimbursement || !reimbursement) {
     return (
       <div className="space-y-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate('/dashboard')}
-          className="-ml-3"
-        >
+        <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="-ml-3">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar
         </Button>
         <div className="rounded-md border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
-          {errorReimbursement
-            ? getErrorMessage(errorReimbursement)
-            : 'Solicitação não encontrada.'}
+          {errorReimbursement ? getErrorMessage(errorReimbursement) : 'Solicitação não encontrada.'}
         </div>
       </div>
     );
@@ -71,12 +55,7 @@ export function ReimbursementDetailPage() {
 
   return (
     <div className="max-w-4xl space-y-4">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => navigate('/dashboard')}
-        className="-ml-3"
-      >
+      <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="-ml-3">
         <ArrowLeft className="h-4 w-4 mr-2" />
         Voltar para o dashboard
       </Button>
@@ -87,14 +66,11 @@ export function ReimbursementDetailPage() {
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <CardTitle className="text-2xl">
-                  {formatCurrency(reimbursement.valor)}
-                </CardTitle>
+                <CardTitle className="text-2xl">{formatCurrency(reimbursement.valor)}</CardTitle>
                 <StatusBadge status={reimbursement.status} />
               </div>
               <CardDescription>
-                {reimbursement.categoria.nome} •{' '}
-                {formatDate(reimbursement.dataDespesa)}
+                {reimbursement.categoria.nome} • {formatDate(reimbursement.dataDespesa)}
               </CardDescription>
             </div>
           </div>
@@ -107,9 +83,7 @@ export function ReimbursementDetailPage() {
 
           {reimbursement.justificativaRejeicao && (
             <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3">
-              <h3 className="text-sm font-semibold text-destructive mb-1">
-                Motivo da rejeição
-              </h3>
+              <h3 className="text-sm font-semibold text-destructive mb-1">Motivo da rejeição</h3>
               <p className="text-sm">{reimbursement.justificativaRejeicao}</p>
             </div>
           )}
@@ -118,9 +92,7 @@ export function ReimbursementDetailPage() {
             <div>
               <p className="text-xs text-muted-foreground">Solicitante</p>
               <p className="text-sm font-medium">{reimbursement.solicitante.nome}</p>
-              <p className="text-xs text-muted-foreground">
-                {reimbursement.solicitante.email}
-              </p>
+              <p className="text-xs text-muted-foreground">{reimbursement.solicitante.email}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Criada em</p>
@@ -137,10 +109,7 @@ export function ReimbursementDetailPage() {
       {/* Anexos */}
       <Card>
         <CardContent className="pt-6">
-          <AttachmentsList
-            reimbursementId={reimbursement.id}
-            canAdd={canManageAttachments}
-          />
+          <AttachmentsList reimbursementId={reimbursement.id} canAdd={canManageAttachments} />
         </CardContent>
       </Card>
 
@@ -148,9 +117,7 @@ export function ReimbursementDetailPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Histórico</CardTitle>
-          <CardDescription>
-            Linha do tempo de eventos desta solicitação
-          </CardDescription>
+          <CardDescription>Linha do tempo de eventos desta solicitação</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoadingHistory && (

@@ -1,5 +1,5 @@
 // Espelhamento dos tipos da API
-// Centraliza todo vocabulário do sistema 
+// Centraliza todo vocabulário do sistema
 // Quando o backend mudar, atualizamos só aqui
 
 export type PerfilUsuario = 'COLABORADOR' | 'GESTOR' | 'FINANCEIRO' | 'ADMIN';
@@ -12,7 +12,7 @@ export type StatusSolicitacao =
   | 'PAGO'
   | 'CANCELADO';
 
-  export type AcaoHistorico =
+export type AcaoHistorico =
   | 'CREATED'
   | 'UPDATED'
   | 'SUBMITTED'
@@ -21,9 +21,9 @@ export type StatusSolicitacao =
   | 'PAID'
   | 'CANCELED';
 
-  export type TipoArquivo = 'PDF' | 'JPG' | 'PNG';
+export type TipoArquivo = 'PDF' | 'JPG' | 'PNG';
 
-  export interface Usuario {
+export interface Usuario {
   id: string;
   nome: string;
   email: string;

@@ -11,15 +11,14 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-    const queryClient = useQueryClient();
-    // Lazy Init: cria a variável de estado user (passa uma função 
-    // ao invés de um valor), só roda uma vez no primeiro render
-    const [user, setUser] = useState<Usuario | null>(() => {
+  const queryClient = useQueryClient();
+  // Lazy Init: cria a variável de estado user (passa uma função
+  // ao invés de um valor), só roda uma vez no primeiro render
+  const [user, setUser] = useState<Usuario | null>(() => {
     const storedToken = tokenStorage.get();
     const storedUser = userStorage.get();
     return storedToken && storedUser ? storedUser : null;
   });
-
 
   const isLoading = false;
 
@@ -28,7 +27,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     tokenStorage.set(result.token);
     userStorage.set(result.usuario);
     setUser(result.usuario);
-    //  Limpa cache de queries antigas 
+    //  Limpa cache de queries antigas
     // (caso tenha logado outro usuário antes sem fazer logout)
     queryClient.clear();
   }
@@ -37,18 +36,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     tokenStorage.remove();
     userStorage.remove();
     setUser(null);
-    // Limpa cache de queries antigas 
-    // (dados de usuário anterior podem aparecer brevemente 
+    // Limpa cache de queries antigas
+    // (dados de usuário anterior podem aparecer brevemente
     // se o próximo login acontecer dentro do staleTime configurado)
     queryClient.clear();
   }
 
   function hasRole(...perfis: PerfilUsuario[]) {
-    if(!user) return false;
+    if (!user) return false;
     return perfis.includes(user.perfil);
   }
 
-  // Provider que empacota todos estados e funções no objeto value 
+  // Provider que empacota todos estados e funções no objeto value
   // e os entrega para todos children (telas e componentes filhos) do app
   const value: AuthContextValue = {
     user,
@@ -58,6 +57,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     logout,
     hasRole,
   };
-    
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>; 
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -20,19 +20,19 @@ import {
 import type { Reimbursement } from '@/types';
 
 interface ReimbursementFormProps {
-    // Reembolso existente para prencher o form em modo edição
-    // Quando undefined o formulário começa vazio (criação)
-    initialData?: Reimbursement; 
+  // Reembolso existente para prencher o form em modo edição
+  // Quando undefined o formulário começa vazio (criação)
+  initialData?: Reimbursement;
 
-    // Callback chamado ao submeter o form com dados válidos
-    // Recebe os dados já validados pelo Zod
-    onSubmit: (data: ReimbursementFormInput) => Promise<void>;
+  // Callback chamado ao submeter o form com dados válidos
+  // Recebe os dados já validados pelo Zod
+  onSubmit: (data: ReimbursementFormInput) => Promise<void>;
 
-    // Callback chamado quando o usuário clica em 'Cancelar'
-    onCancel: () => void;
+  // Callback chamado quando o usuário clica em 'Cancelar'
+  onCancel: () => void;
 
-    // Rótulo do botão de submissão (default: 'Salvar')
-    submitLabel?: string;
+  // Rótulo do botão de submissão (default: 'Salvar')
+  submitLabel?: string;
 }
 
 export function ReimbursementForm({
@@ -73,8 +73,7 @@ export function ReimbursementForm({
   // visível para o usuário não perder contexto
   const activeCategorias = categorias?.filter((c) => c.ativo) ?? [];
   const currentCategoria = categorias?.find((c) => c.id === initialData?.categoriaId);
-  const showInactiveCurrent =
-    currentCategoria && !currentCategoria.ativo && initialData;
+  const showInactiveCurrent = currentCategoria && !currentCategoria.ativo && initialData;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -125,11 +124,7 @@ export function ReimbursementForm({
 
       <Field>
         <FieldLabel htmlFor="dataDespesa">Data da despesa</FieldLabel>
-        <Input
-          id="dataDespesa"
-          type="date"
-          {...register('dataDespesa')}
-        />
+        <Input id="dataDespesa" type="date" {...register('dataDespesa')} />
         {errors.dataDespesa && <FieldError>{errors.dataDespesa.message}</FieldError>}
       </Field>
 

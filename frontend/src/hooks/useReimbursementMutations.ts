@@ -5,19 +5,15 @@ import {
   type RejectPayload,
   type UpdateReimbursementPayload,
 } from '@/api/reimbursements.api';
-import {
-  REIMBURSEMENTS_QUERY_KEY,
-  reimbursementQueryKey,
-} from './useReimbursements';
+import { REIMBURSEMENTS_QUERY_KEY, reimbursementQueryKey } from './useReimbursements';
 
 // Hook que expõe todas mutations de um reembolso
 // Cada mutation invalida as queries relacionadas para forçar refetch
 
-// Uso: 
-// 
+// Uso:
+//
 // const { create, update, submit, approve, reject, pay, cancel } = useReimbursementMutations();
 // await submit.mutateAsync(reimbursement.id)
-
 
 export function useReimbursementMutations() {
   const queryClient = useQueryClient();
@@ -32,8 +28,7 @@ export function useReimbursementMutations() {
   }
 
   const create = useMutation({
-    mutationFn: (payload: CreateReimbursementPayload) =>
-      reimbursementsApi.create(payload),
+    mutationFn: (payload: CreateReimbursementPayload) => reimbursementsApi.create(payload),
     onSuccess: (data) => invalidateRelated(data.id),
   });
 
@@ -71,7 +66,3 @@ export function useReimbursementMutations() {
 
   return { create, update, submit, approve, reject, pay, cancel };
 }
-
-
-
-  

@@ -9,9 +9,7 @@ export interface CreateAttachmentPayload {
 
 export const attachmentsApi = {
   async listByReimbursement(reimbursementId: string): Promise<Anexo[]> {
-    const { data } = await http.get<Anexo[]>(
-      `/reimbursements/${reimbursementId}/attachments`,
-    );
+    const { data } = await http.get<Anexo[]>(`/reimbursements/${reimbursementId}/attachments`);
     return data;
   },
 

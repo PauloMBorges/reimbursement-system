@@ -5,9 +5,7 @@ import { z } from 'zod';
 // Mas com mensagens em portugues para o usuário final
 
 export const reimbursementFormSchema = z.object({
-  categoriaId: z
-    .string()
-    .min(1, 'Selecione uma categoria'),
+  categoriaId: z.string().min(1, 'Selecione uma categoria'),
   descricao: z
     .string()
     .min(1, 'Descrição é obrigatória')
@@ -15,23 +13,15 @@ export const reimbursementFormSchema = z.object({
   valor: z
     .string()
     .min(1, 'Valor é obrigatório')
-    .refine(
-      (val) => {
-        const num = parseFloat(val);
-        return !isNaN(num) && num > 0;
-      },
-      'Valor deve ser maior que zero',
-    )
-    .refine(
-      (val) => {
-        // Aceita até 2 casas decimais (centavos)
-        return /^\d+(\.\d{1,2})?$/.test(val);
-      },
-      'Valor deve ter no máximo 2 casas decimais',
-    ),
-  dataDespesa: z
-    .string()
-    .min(1, 'Data da despesa é obrigatória'),
+    .refine((val) => {
+      const num = parseFloat(val);
+      return !isNaN(num) && num > 0;
+    }, 'Valor deve ser maior que zero')
+    .refine((val) => {
+      // Aceita até 2 casas decimais (centavos)
+      return /^\d+(\.\d{1,2})?$/.test(val);
+    }, 'Valor deve ter no máximo 2 casas decimais'),
+  dataDespesa: z.string().min(1, 'Data da despesa é obrigatória'),
 });
 
 export type ReimbursementFormInput = z.infer<typeof reimbursementFormSchema>;

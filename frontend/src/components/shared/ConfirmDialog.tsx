@@ -40,18 +40,10 @@ export function ConfirmDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2 sm:gap-2">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isLoading}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {cancelLabel}
           </Button>
-          <Button
-            variant={variant}
-            onClick={onConfirm}
-            disabled={isLoading}
-          >
+          <Button variant={variant} onClick={onConfirm} disabled={isLoading}>
             {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
             {confirmLabel}
           </Button>

@@ -26,27 +26,27 @@ export function AppRoutes() {
       />
 
       <Route
-          path="/reimbursements/new"
-          element={
-            <PrivateRoute allowedRoles={['COLABORADOR']}>
-              <AppLayout>
-                <ReimbursementCreatePage />
-              </AppLayout>
-            </PrivateRoute>
-          }
+        path="/reimbursements/new"
+        element={
+          <PrivateRoute allowedRoles={['COLABORADOR']}>
+            <AppLayout>
+              <ReimbursementCreatePage />
+            </AppLayout>
+          </PrivateRoute>
+        }
       />
 
-       <Route
-          path="/reimbursements/:id"
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <ReimbursementDetailPage />
-              </AppLayout>
-            </PrivateRoute>
-          }
+      <Route
+        path="/reimbursements/:id"
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <ReimbursementDetailPage />
+            </AppLayout>
+          </PrivateRoute>
+        }
       />
-      
+
       <Route
         path="/reimbursements/:id/edit"
         element={

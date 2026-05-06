@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Header } from './Header';
 
 interface AppLayoutProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 // Wrapper simples que vai envolver toda página privada

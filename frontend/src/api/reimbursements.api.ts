@@ -2,16 +2,16 @@ import { http } from './http';
 import type { Reimbursement } from '@/types';
 
 export interface CreateReimbursementPayload {
-    categoriaId: string;
-    descricao: string;
-    valor: number;
-    dataDespesa: string;
+  categoriaId: string;
+  descricao: string;
+  valor: number;
+  dataDespesa: string;
 }
 
 export type UpdateReimbursementPayload = Partial<CreateReimbursementPayload>;
 
 export interface RejectPayload {
-    justificativa: string;
+  justificativa: string;
 }
 
 export const reimbursementsApi = {

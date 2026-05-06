@@ -15,31 +15,25 @@ interface TimelineProps {
   entries: HistoricoEntry[];
 }
 
-// Mapeamento de ação → ícone + descrição 
+// Mapeamento de ação → ícone + descrição
 // Centraliza a 'tradução' de eventos técnicos para texto humano
-const ACTION_CONFIG: Record<
-  AcaoHistorico,
-  { icon: typeof Circle; label: string; color: string }
-> = {
-  CREATED: { icon: FilePlus, label: 'criou a solicitação', color: 'text-slate-600' },
-  UPDATED: { icon: Edit, label: 'editou a solicitação', color: 'text-slate-600' },
-  SUBMITTED: { icon: Send, label: 'enviou para aprovação', color: 'text-blue-600' },
-  APPROVED: { icon: CheckCircle2, label: 'aprovou a solicitação', color: 'text-green-600' },
-  REJECTED: { icon: XCircle, label: 'rejeitou a solicitação', color: 'text-red-600' },
-  PAID: { icon: CreditCard, label: 'registrou o pagamento', color: 'text-emerald-600' },
-  CANCELED: { icon: CircleDashed, label: 'cancelou a solicitação', color: 'text-gray-500' },
-};
+const ACTION_CONFIG: Record<AcaoHistorico, { icon: typeof Circle; label: string; color: string }> =
+  {
+    CREATED: { icon: FilePlus, label: 'criou a solicitação', color: 'text-slate-600' },
+    UPDATED: { icon: Edit, label: 'editou a solicitação', color: 'text-slate-600' },
+    SUBMITTED: { icon: Send, label: 'enviou para aprovação', color: 'text-blue-600' },
+    APPROVED: { icon: CheckCircle2, label: 'aprovou a solicitação', color: 'text-green-600' },
+    REJECTED: { icon: XCircle, label: 'rejeitou a solicitação', color: 'text-red-600' },
+    PAID: { icon: CreditCard, label: 'registrou o pagamento', color: 'text-emerald-600' },
+    CANCELED: { icon: CircleDashed, label: 'cancelou a solicitação', color: 'text-gray-500' },
+  };
 
 export function Timeline({ entries }: TimelineProps) {
   if (entries.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground py-4">
-        Nenhum evento registrado ainda.
-      </p>
-    );
+    return <p className="text-sm text-muted-foreground py-4">Nenhum evento registrado ainda.</p>;
   }
 
-  // Ordena do mais recente pro mais antigo 
+  // Ordena do mais recente pro mais antigo
   const sortedEntries = [...entries].sort(
     (a, b) => new Date(b.criadoEm).getTime() - new Date(a.criadoEm).getTime(),
   );
@@ -68,9 +62,7 @@ export function Timeline({ entries }: TimelineProps) {
                 {formatDateTime(entry.criadoEm)}
               </p>
               {entry.observacao && (
-                <p className="text-sm mt-2 p-3 rounded-md bg-muted/50 border">
-                  {entry.observacao}
-                </p>
+                <p className="text-sm mt-2 p-3 rounded-md bg-muted/50 border">{entry.observacao}</p>
               )}
             </div>
           </li>

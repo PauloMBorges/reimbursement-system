@@ -39,8 +39,8 @@ type AttachmentInput = z.infer<typeof attachmentSchema>;
 
 interface AttachmentsListProps {
   reimbursementId: string;
-   //Se true, exibe o botão "Adicionar anexo".
-   // Geralmente true apenas para o dono em RASCUNHO.
+  //Se true, exibe o botão "Adicionar anexo".
+  // Geralmente true apenas para o dono em RASCUNHO.
   canAdd: boolean;
 }
 
@@ -96,8 +96,8 @@ export function AttachmentsList({ reimbursementId, canAdd }: AttachmentsListProp
               <DialogHeader>
                 <DialogTitle>Adicionar anexo</DialogTitle>
                 <DialogDescription>
-                  Informe o nome, a URL e o tipo do arquivo. Em uma versão real,
-                  haveria upload direto.
+                  Informe o nome, a URL e o tipo do arquivo. Em uma versão real, haveria upload
+                  direto.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -159,9 +159,7 @@ export function AttachmentsList({ reimbursementId, canAdd }: AttachmentsListProp
         )}
       </div>
 
-      {isLoading && (
-        <p className="text-sm text-muted-foreground">Carregando anexos...</p>
-      )}
+      {isLoading && <p className="text-sm text-muted-foreground">Carregando anexos...</p>}
 
       {!isLoading && anexos && anexos.length === 0 && (
         <p className="text-sm text-muted-foreground py-2">Nenhum anexo.</p>
@@ -187,9 +185,7 @@ function AttachmentItem({ anexo }: { anexo: Anexo }) {
         <span className="text-sm truncate" title={anexo.nomeArquivo}>
           {anexo.nomeArquivo}
         </span>
-        <span className="text-xs text-muted-foreground shrink-0">
-          ({anexo.tipoArquivo})
-        </span>
+        <span className="text-xs text-muted-foreground shrink-0">({anexo.tipoArquivo})</span>
       </div>
       <a
         href={anexo.urlArquivo}

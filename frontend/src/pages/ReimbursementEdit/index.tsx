@@ -2,13 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ReimbursementForm } from '@/components/shared/ReimbursementForm';
 import { useReimbursement } from '@/hooks/useReimbursements';
 import { useReimbursementMutations } from '@/hooks/useReimbursementMutations';
@@ -58,13 +52,15 @@ export function ReimbursementEditPage() {
   async function handleSubmit(data: ReimbursementFormInput) {
     if (!id) return;
     try {
-      await update.mutateAsync({ id, payload: {
-        categoriaId: data.categoriaId,
-        descricao: data.descricao,
-        valor: parseFloat(data.valor),
-        dataDespesa: data.dataDespesa,
-      },
-    });
+      await update.mutateAsync({
+        id,
+        payload: {
+          categoriaId: data.categoriaId,
+          descricao: data.descricao,
+          valor: parseFloat(data.valor),
+          dataDespesa: data.dataDespesa,
+        },
+      });
       toast.success('Rascunho atualizado');
       navigate(`/reimbursements/${id}`);
     } catch (err) {
@@ -88,8 +84,7 @@ export function ReimbursementEditPage() {
         <CardHeader>
           <CardTitle>Editar Rascunho</CardTitle>
           <CardDescription>
-            Faça as alterações necessárias. Após enviar, a solicitação não poderá
-            mais ser editada.
+            Faça as alterações necessárias. Após enviar, a solicitação não poderá mais ser editada.
           </CardDescription>
         </CardHeader>
         <CardContent>
