@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
+import { ReimbursementDetailSkeleton } from '@/components/shared/ReimbursementDetailSkeleton';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,11 +28,7 @@ export function ReimbursementDetailPage() {
 
   // Loading da solicitação principal
   if (isLoadingReimbursement) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <ReimbursementDetailSkeleton />;
   }
 
   // Erro ou not found

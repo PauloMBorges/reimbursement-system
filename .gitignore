@@ -38,3 +38,5 @@ coverage/
 
 # Docker volumes locais 
 postgres-data/
+
+.vite/

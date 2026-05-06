@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader2, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -9,6 +9,7 @@ import { UserFormDialog } from '@/components/shared/UserFormDialog';
 import { useUsers } from '@/hooks/useUsers';
 import { getErrorMessage } from '@/api/http';
 import type { PerfilUsuario } from '@/types';
+import { TableSkeleton } from '@/components/shared/TableSkeleton';
 
 const PERFIL_LABEL: Record<PerfilUsuario, string> = {
   COLABORADOR: 'Colaborador',
@@ -44,11 +45,8 @@ export function UsersPage() {
       </div>
       
     {/* Loading State: feedback imediato enquanto a API resolve a Promise */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </div>
-      )}
+      {isLoading && <TableSkeleton rows={4} columns={3} />}
+
       {/* Error State: tratamento amigável caso o token expire ou a rede caia */}
       {error && (
         <div className="rounded-md border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">

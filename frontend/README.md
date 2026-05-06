@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# Frontend — Sistema de Reembolsos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SPA React/TypeScript que consome a API do backend.
 
-Currently, two official plugins are available:
+> Documentação geral: [../README.md](../README.md)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- Vite 8 + React 19 + TypeScript
+- TanStack Query (estado de servidor)
+- Context API (autenticação)
+- React Router 7
+- React Hook Form + Zod
+- Tailwind CSS + shadcn/ui
+- Vitest + Testing Library
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Como rodar (local)
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+cp .env.example .env  # ou crie manualmente
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+App em http://localhost:5173.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Scripts disponíveis
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Comando                 | O que faz                           |
+| ----------------------- | ----------------------------------- |
+| `npm run dev`           | Modo desenvolvimento com hot reload |
+| `npm run build`         | Build de produção em `dist/`        |
+| `npm run preview`       | Servidor de preview do build        |
+| `npm run lint`          | Roda ESLint                         |
+| `npm run lint:fix`      | Roda ESLint corrigindo o que dá     |
+| `npm run format`        | Formata arquivos com Prettier       |
+| `npm run format:check`  | Verifica formatação sem alterar     |
+| `npm test`              | Roda todos os testes                |
+| `npm run test:watch`    | Modo watch                          |
+| `npm run test:coverage` | Gera relatório de cobertura         |
+| `npm run test:ui`       | Interface visual dos testes         |
+
+## Estrutura de pastas
+
+src/
+├── api/ # Clientes Axios por domínio
+├── components/
+│ ├── layout/ # Header, AppLayout
+│ ├── shared/ # Componentes do projeto (PrivateRoute, StatusBadge, etc.)
+│ └── ui/ # Componentes shadcn/ui (não modifique direto)
+├── contexts/ # AuthContext (auth-context.ts, AuthContext.tsx, useAuth.ts)
+├── hooks/ # Custom hooks com TanStack Query
+├── lib/
+│ ├── format.ts # Formatadores (currency, date)
+│ ├── utils.ts # cn() do shadcn
+│ └── schemas/ # Schemas Zod
+├── pages/ # Páginas da aplicação
+├── types/ # Tipos compartilhados (espelham API)
+├── App.tsx # BrowserRouter > AuthProvider > Routes
+├── main.tsx
+├── index.css
+└── routes.tsx
+tests/ # 25 testes Vitest + Testing Library
+
+## Adicionando componentes shadcn/ui
+
+```bash
+npx shadcn@latest add <nome>
 ```
+
+Ex: `npx shadcn@latest add tooltip`. Os arquivos vão pra `src/components/ui/`.
+
+## Variáveis de ambiente
+
+| Variável       | Descrição               | Exemplo                 |
+| -------------- | ----------------------- | ----------------------- |
+| `VITE_API_URL` | URL base da API backend | `http://localhost:3333` |
+
+> Variáveis Vite precisam do prefixo `VITE_` para serem expostas ao cliente.
+
+## Convenções
+
+- **Imports absolutos via alias `@/`:** `import { Button } from '@/components/ui/button'` (configurado em `vite.config.ts` e `tsconfig.app.json`)
+- **`Record<EnumType, ...>` em mapas exhaustivos:** TypeScript força mapeamento completo
+- **Componentes "burros" + páginas "espertas":** componentes em `shared/` recebem props/callbacks; páginas em `pages/` integram com hooks e roteamento
+- **TanStack Query com chaves hierárquicas:** `['reimbursements', id, 'history']` permite invalidação em cascata

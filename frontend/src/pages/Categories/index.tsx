@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Edit, Loader2, Plus, Power, PowerOff } from 'lucide-react';
+import { Edit, Plus, Power, PowerOff } from 'lucide-react';
+import { TableSkeleton } from '@/components/shared/TableSkeleton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent} from '@/components/ui/card';
 import { CategoryFormDialog } from '@/components/shared/CategoryFormDialog';
@@ -72,11 +73,7 @@ export function CategoriesPage() {
         </Button>
       </div>
 
-      {isLoading && (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </div>
-      )}
+      {isLoading && <TableSkeleton rows={5} columns={3} />}
 
       {error && (
         <div className="rounded-md border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">

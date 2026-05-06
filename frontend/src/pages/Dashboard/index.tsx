@@ -1,6 +1,6 @@
-import { Loader2 } from 'lucide-react';
 import { useReimbursements } from '@/hooks/useReimbursements';
 import { ReimbursementsTable } from '@/components/shared/ReimbursementsTable';
+import { ReimbursementsTableSkeleton } from '@/components/shared/ReimbursementsTableSkeleton';
 import { NewReimbursementButton } from '@/components/shared/NewReimbursementButton';
 import { getErrorMessage } from '@/api/http';
 
@@ -19,11 +19,7 @@ export function DashboardPage() {
         <NewReimbursementButton />
       </div>
 
-      {isLoading && (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </div>
-      )}
+      {isLoading && <ReimbursementsTableSkeleton />}
 
       {error && (
         <div className="rounded-md border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
