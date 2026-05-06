@@ -5,6 +5,7 @@ import { LoginPage } from '@/pages/Login';
 import { DashboardPage } from '@/pages/Dashboard';
 import { ReimbursementCreatePage } from '@/pages/ReimbursementCreate';
 import { ReimbursementEditPage } from '@/pages/ReimbursementEdit';
+import { ReimbursementDetailPage } from '@/pages/ReimbursementDetail';
 
 export function AppRoutes() {
   return (
@@ -24,15 +25,26 @@ export function AppRoutes() {
         }
       />
 
+      <Route
+          path="/reimbursements/new"
+          element={
+            <PrivateRoute allowedRoles={['COLABORADOR']}>
+              <AppLayout>
+                <ReimbursementCreatePage />
+              </AppLayout>
+            </PrivateRoute>
+          }
+      />
+
        <Route
-        path="/reimbursements/new"
-        element={
-          <PrivateRoute allowedRoles={['COLABORADOR']}>
-            <AppLayout>
-              <ReimbursementCreatePage />
-            </AppLayout>
-          </PrivateRoute>
-        }
+          path="/reimbursements/:id"
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <ReimbursementDetailPage />
+              </AppLayout>
+            </PrivateRoute>
+          }
       />
       
       <Route

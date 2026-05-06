@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import 'dayjs/locale/pt-br';
 
+dayjs.extend(utc);
 dayjs.locale('pt-br');
 
 // Formata um valor decinal (em string ou number) para moeda BRL
@@ -16,7 +18,7 @@ export function formatCurrency(value: string | number): string {
 
 // Formata uma data ISO string para DD/MM/YYYY
 export function formatDate(date: string):string {
-    return dayjs(date).format('DD/MM/YYYY');
+    return dayjs.utc(date).format('DD/MM/YYYY');
 }
 
 // Formata uma data ISO string para DD/MM/YYYY HH:mm 
