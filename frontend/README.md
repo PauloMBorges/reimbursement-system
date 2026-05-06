@@ -41,26 +41,27 @@ App em http://localhost:5173.
 | `npm run test:ui`       | Interface visual dos testes         |
 
 ## Estrutura de pastas
-
+```
 src/
-├── api/ # Clientes Axios por domínio
+├── api/              # Clientes Axios por domínio
 ├── components/
-│ ├── layout/ # Header, AppLayout
-│ ├── shared/ # Componentes do projeto (PrivateRoute, StatusBadge, etc.)
-│ └── ui/ # Componentes shadcn/ui (não modifique direto)
-├── contexts/ # AuthContext (auth-context.ts, AuthContext.tsx, useAuth.ts)
-├── hooks/ # Custom hooks com TanStack Query
+│   ├── layout/       # Header, AppLayout
+│   ├── shared/       # Componentes do projeto (PrivateRoute, StatusBadge, etc.)
+│   └── ui/           # Componentes shadcn/ui (não modifique direto)
+├── contexts/         # AuthContext (auth-context.ts, AuthContext.tsx, useAuth.ts)
+├── hooks/            # Custom hooks com TanStack Query
 ├── lib/
-│ ├── format.ts # Formatadores (currency, date)
-│ ├── utils.ts # cn() do shadcn
-│ └── schemas/ # Schemas Zod
-├── pages/ # Páginas da aplicação
-├── types/ # Tipos compartilhados (espelham API)
-├── App.tsx # BrowserRouter > AuthProvider > Routes
+│   ├── format.ts     # Formatadores (currency, date)
+│   ├── utils.ts      # cn() do shadcn
+│   └── schemas/      # Schemas Zod
+├── pages/            # Páginas da aplicação
+├── types/            # Tipos compartilhados (espelham API)
+├── App.tsx           # BrowserRouter > AuthProvider > Routes
 ├── main.tsx
 ├── index.css
 └── routes.tsx
-tests/ # 25 testes Vitest + Testing Library
+tests/                # 25 testes Vitest + Testing Library
+```
 
 ## Adicionando componentes shadcn/ui
 

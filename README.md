@@ -70,9 +70,13 @@ Sistema fullstack para gestão de solicitações de reembolso com controle de fl
 
 ### Máquina de estados
 
-RASCUNHO → ENVIADO → APROVADO → PAGO
-→ REJEITADO
-RASCUNHO ou ENVIADO → CANCELADO
+```
+[ RASCUNHO ] ──> [ ENVIADO ] ──> [ APROVADO ] ──> [ PAGO ]
+     │                │
+     │                ├──> [ REJEITADO ]
+     │                │
+     └────────────────┴──> [ CANCELADO ]
+```
 
 Transições disponíveis por perfil:
 
