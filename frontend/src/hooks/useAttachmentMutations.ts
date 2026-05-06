@@ -22,7 +22,7 @@ export function useAttachmentMutations() {
     // Usa 'variables' pra garantir que está invalidando o
     // cache usando o ID do reembolso pai (e não o id do anexo recém criado)
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
+      queryClient.refetchQueries({
         queryKey: attachmentsQueryKey(variables.reimbursementId),
       });
     },

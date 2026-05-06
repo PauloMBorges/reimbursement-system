@@ -18,50 +18,50 @@ import { REIMBURSEMENTS_QUERY_KEY, reimbursementQueryKey } from './useReimbursem
 export function useReimbursementMutations() {
   const queryClient = useQueryClient();
 
-  // Função para invalidar caches relacionados
-  // Chamada após cada mutation que muda o estado de um reembolso
-  function invalidateRelated(id?: string) {
-    queryClient.invalidateQueries({ queryKey: REIMBURSEMENTS_QUERY_KEY });
+  // força refetch de todas as queries afetadas
+  // mais agressivo que invalidate (garante que dados sejam re-buscasdos imediatamente)
+  async function refetchRelated(id?: string) {
+    await queryClient.refetchQueries({ queryKey: REIMBURSEMENTS_QUERY_KEY });
     if (id) {
-      queryClient.invalidateQueries({ queryKey: reimbursementQueryKey(id) });
+      await queryClient.refetchQueries({ queryKey: reimbursementQueryKey(id) });
     }
   }
 
   const create = useMutation({
     mutationFn: (payload: CreateReimbursementPayload) => reimbursementsApi.create(payload),
-    onSuccess: (data) => invalidateRelated(data.id),
+    onSuccess: (data) => refetchRelated(data.id),
   });
 
   const update = useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: UpdateReimbursementPayload }) =>
       reimbursementsApi.update(id, payload),
-    onSuccess: (data) => invalidateRelated(data.id),
+    onSuccess: (data) => refetchRelated(data.id),
   });
 
   const submit = useMutation({
     mutationFn: (id: string) => reimbursementsApi.submit(id),
-    onSuccess: (data) => invalidateRelated(data.id),
+    onSuccess: (data) => refetchRelated(data.id),
   });
 
   const approve = useMutation({
     mutationFn: (id: string) => reimbursementsApi.approve(id),
-    onSuccess: (data) => invalidateRelated(data.id),
+    onSuccess: (data) => refetchRelated(data.id),
   });
 
   const reject = useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: RejectPayload }) =>
       reimbursementsApi.reject(id, payload),
-    onSuccess: (data) => invalidateRelated(data.id),
+    onSuccess: (data) => refetchRelated(data.id),
   });
 
   const pay = useMutation({
     mutationFn: (id: string) => reimbursementsApi.pay(id),
-    onSuccess: (data) => invalidateRelated(data.id),
+    onSuccess: (data) => refetchRelated(data.id),
   });
 
   const cancel = useMutation({
     mutationFn: (id: string) => reimbursementsApi.cancel(id),
-    onSuccess: (data) => invalidateRelated(data.id),
+    onSuccess: (data) => refetchRelated(data.id),
   });
 
   return { create, update, submit, approve, reject, pay, cancel };

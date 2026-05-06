@@ -7,7 +7,6 @@ export function useCategories() {
   return useQuery({
     queryKey: CATEGORIES_QUERY_KEY,
     queryFn: () => categoriesApi.list(),
-    // Categorias mudam raramente (cache mais longo)
-    staleTime: 5 * 60 * 1000, // 5 minutos
+    staleTime: 30 * 1000, // 5 minutos
   });
 }

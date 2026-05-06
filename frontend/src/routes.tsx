@@ -6,6 +6,9 @@ import { DashboardPage } from '@/pages/Dashboard';
 import { ReimbursementCreatePage } from '@/pages/ReimbursementCreate';
 import { ReimbursementEditPage } from '@/pages/ReimbursementEdit';
 import { ReimbursementDetailPage } from '@/pages/ReimbursementDetail';
+import { CategoriesPage } from '@/pages/Categories';
+import { UsersPage } from '@/pages/Users';
+
 
 export function AppRoutes() {
   return (
@@ -57,6 +60,29 @@ export function AppRoutes() {
           </PrivateRoute>
         }
       />
+
+      <Route
+        path="/admin/categories"
+        element={
+          <PrivateRoute allowedRoles={['ADMIN']}>
+            <AppLayout>
+              <CategoriesPage />
+            </AppLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/admin/users"
+        element={
+          <PrivateRoute allowedRoles={['ADMIN']}>
+            <AppLayout>
+              <UsersPage />
+            </AppLayout>
+          </PrivateRoute>
+        }
+      />
+
 
       {/* Redireciona raiz para dashboard (que cuida de auth) */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
