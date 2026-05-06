@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { authApi } from '@/api/auth.api';
 import { tokenStorage, userStorage } from '@/api/http';
 import type { PerfilUsuario, Usuario } from '@/types';
@@ -10,6 +11,7 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+    const queryClient = useQueryClient();
     // Lazy Init: cria a variável de estado user (passa uma função 
     // ao invés de um valor), só roda uma vez no primeiro render
     const [user, setUser] = useState<Usuario | null>(() => {
@@ -18,7 +20,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return storedToken && storedUser ? storedUser : null;
   });
 
-  
+
   const isLoading = false;
 
   async function login(email: string, senha: string) {
@@ -26,12 +28,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     tokenStorage.set(result.token);
     userStorage.set(result.usuario);
     setUser(result.usuario);
+    //  Limpa cache de queries antigas 
+    // (caso tenha logado outro usuário antes sem fazer logout)
+    queryClient.clear();
   }
 
   function logout() {
     tokenStorage.remove();
     userStorage.remove();
     setUser(null);
+    // Limpa cache de queries antigas 
+    // (dados de usuário anterior podem aparecer brevemente 
+    // se o próximo login acontecer dentro do staleTime configurado)
+    queryClient.clear();
   }
 
   function hasRole(...perfis: PerfilUsuario[]) {

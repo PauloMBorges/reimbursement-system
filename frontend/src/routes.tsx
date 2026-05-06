@@ -3,6 +3,8 @@ import { PrivateRoute } from '@/components/shared/PrivateRoute';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { LoginPage } from '@/pages/Login';
 import { DashboardPage } from '@/pages/Dashboard';
+import { ReimbursementCreatePage } from '@/pages/ReimbursementCreate';
+import { ReimbursementEditPage } from '@/pages/ReimbursementEdit';
 
 export function AppRoutes() {
   return (
@@ -17,6 +19,28 @@ export function AppRoutes() {
           <PrivateRoute>
             <AppLayout>
               <DashboardPage />
+            </AppLayout>
+          </PrivateRoute>
+        }
+      />
+
+       <Route
+        path="/reimbursements/new"
+        element={
+          <PrivateRoute allowedRoles={['COLABORADOR']}>
+            <AppLayout>
+              <ReimbursementCreatePage />
+            </AppLayout>
+          </PrivateRoute>
+        }
+      />
+      
+      <Route
+        path="/reimbursements/:id/edit"
+        element={
+          <PrivateRoute allowedRoles={['COLABORADOR']}>
+            <AppLayout>
+              <ReimbursementEditPage />
             </AppLayout>
           </PrivateRoute>
         }

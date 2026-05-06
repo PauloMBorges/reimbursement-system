@@ -4,7 +4,7 @@ import type { Reimbursement } from '@/types';
 export interface CreateReimbursementPayload {
     categoriaId: string;
     descricao: string;
-    valor: string;
+    valor: number;
     dataDespesa: string;
 }
 
