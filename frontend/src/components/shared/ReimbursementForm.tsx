@@ -124,7 +124,14 @@ export function ReimbursementForm({
 
       <Field>
         <FieldLabel htmlFor="dataDespesa">Data da despesa</FieldLabel>
-        <Input id="dataDespesa" type="date" {...register('dataDespesa')} />
+        <Input
+          id="dataDespesa"
+          type="date"
+          // DIFERENCIAL - Impede seleção de datas futuras
+          // navegador renderiza calendário com datas futuras em cinza-claro (náo selecionáveis)
+          max={new Date().toISOString().split('T')[0]}
+          {...register('dataDespesa')}
+        />
         {errors.dataDespesa && <FieldError>{errors.dataDespesa.message}</FieldError>}
       </Field>
 

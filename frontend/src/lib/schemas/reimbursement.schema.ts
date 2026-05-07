@@ -21,7 +21,19 @@ export const reimbursementFormSchema = z.object({
       // Aceita até 2 casas decimais (centavos)
       return /^\d+(\.\d{1,2})?$/.test(val);
     }, 'Valor deve ter no máximo 2 casas decimais'),
-  dataDespesa: z.string().min(1, 'Data da despesa é obrigatória'),
+  dataDespesa: z
+  .string()
+  .min(1, 'Data é obrigatória')
+  // Diferencial - Adiciona bloqueio de datas futuras
+  .refine(
+    (date) => {
+      const inputDate = new Date(`${date}T00:00:00.000Z`);
+      const today = new Date();
+      today.setUTCHours(23, 59, 59, 999);
+      return inputDate <= today;
+    },
+    { message: 'Data da despesa não pode ser futura' },
+  ),
 });
 
 export type ReimbursementFormInput = z.infer<typeof reimbursementFormSchema>;

@@ -17,9 +17,19 @@ export const createReimbursementSchema = z.object({
     .number()
     .positive('Valor deve ser maior que zero')
     .multipleOf(0.01, 'Valor deve ter no máximo 2 casas decimais'),
-  dataDespesa: z.coerce.date({
-    errorMap: () => ({ message: 'Data da despesa inválida' }),
-  }),
+  dataDespesa: z.coerce
+    .date({
+      errorMap: () => ({ message: 'Data da despesa inválida' }),
+    })
+    // Diferencial - Adiciona bloqueio de datas futuras
+    .refine(
+      (date) => {
+        const today = new Date();
+        today.setUTCHours(23, 59, 59, 999);
+        return date <= today;
+      },
+      { message: 'Data da despesa não pode ser futura' },
+    ),
 });
 
 // Schema para edição da solicitação em RASCUNHO
