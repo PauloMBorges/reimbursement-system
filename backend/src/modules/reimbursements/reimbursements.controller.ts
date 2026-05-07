@@ -155,4 +155,14 @@ export const reimbursementsController = {
       next(err);
     }
   },
+
+  // DIFERENCIAL - handler de stats (dashboard)
+  async getStats(req: Request, res: Response) {
+    const stats = await reimbursementsService.getStats({
+      // Garante que o usuário está autenticado e tem perfil
+      id: req.user!.id,
+      perfil: req.user!.perfil,
+    });
+    return res.json(stats);
+  },
 };

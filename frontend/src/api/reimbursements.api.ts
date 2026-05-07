@@ -1,5 +1,6 @@
 import { http } from './http';
-import type { Reimbursement } from '@/types';
+import type { Reimbursement, ReimbursementStats } from '@/types';
+
 
 export interface CreateReimbursementPayload {
   categoriaId: string;
@@ -65,4 +66,9 @@ export const reimbursementsApi = {
     const { data } = await http.post<Reimbursement>(`/reimbursements/${id}/cancel`);
     return data;
   },
+
+  async getStats(): Promise<ReimbursementStats> {
+  const { data } = await http.get<ReimbursementStats>('/reimbursements/stats');
+  return data;
+},
 };

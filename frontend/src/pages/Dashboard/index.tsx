@@ -3,6 +3,7 @@ import { ReimbursementsTable } from '@/components/shared/ReimbursementsTable';
 import { ReimbursementsTableSkeleton } from '@/components/shared/ReimbursementsTableSkeleton';
 import { NewReimbursementButton } from '@/components/shared/NewReimbursementButton';
 import { getErrorMessage } from '@/api/http';
+import { DashboardStats } from '@/components/shared/DashboardStats';
 
 export function DashboardPage() {
   const { data, isLoading, error } = useReimbursements();
@@ -18,6 +19,8 @@ export function DashboardPage() {
         </div>
         <NewReimbursementButton />
       </div>
+
+      <DashboardStats />
 
       {isLoading && <ReimbursementsTableSkeleton />}
 

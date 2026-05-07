@@ -448,5 +448,114 @@ describe('Reimbursements - criação', () => {
         expect(response.status).toBe(201);
       });
     });
+
+    describe('Reimbursements - estatísticas (GET /reimbursements/stats)', () => {
+      it('COLABORADOR vê totais das próprias solicitações', async () => {
+        const users = await createAllRoles();
+        const categoria = await createCategoria();
+
+        // Cria 2 RASCUNHO + 1 ENVIADO do colaborador
+        await createReimbursement(
+          users.COLABORADOR.id,
+          categoria.id,
+          'RASCUNHO',
+        );
+        await createReimbursement(
+          users.COLABORADOR.id,
+          categoria.id,
+          'RASCUNHO',
+        );
+        await createReimbursement(
+          users.COLABORADOR.id,
+          categoria.id,
+          'ENVIADO',
+        );
+
+        const response = await request(app)
+          .get('/reimbursements/stats')
+          .set('Authorization', `Bearer ${tokenFor(users.COLABORADOR)}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.rascunho.count).toBe(2);
+        expect(response.body.enviado.count).toBe(1);
+        expect(response.body.aprovado.count).toBe(0);
+      });
+
+      it('GESTOR não vê rascunhos (só ENVIADO em diante)', async () => {
+        const users = await createAllRoles();
+        const categoria = await createCategoria();
+
+        await createReimbursement(
+          users.COLABORADOR.id,
+          categoria.id,
+          'RASCUNHO',
+        );
+        await createReimbursement(
+          users.COLABORADOR.id,
+          categoria.id,
+          'ENVIADO',
+        );
+        await createReimbursement(
+          users.COLABORADOR.id,
+          categoria.id,
+          'APROVADO',
+        );
+
+        const response = await request(app)
+          .get('/reimbursements/stats')
+          .set('Authorization', `Bearer ${tokenFor(users.GESTOR)}`);
+
+        expect(response.status).toBe(200);
+        // Gestor não vê rascunho na resposta
+        expect(response.body.rascunho).toBeUndefined();
+        expect(response.body.aguardandoAnalise.count).toBe(1);
+        expect(response.body.aprovadas.count).toBe(1);
+      });
+
+      it('FINANCEIRO vê apenas APROVADO e PAGO', async () => {
+        const users = await createAllRoles();
+        const categoria = await createCategoria();
+
+        await createReimbursement(
+          users.COLABORADOR.id,
+          categoria.id,
+          'APROVADO',
+        );
+        await createReimbursement(
+          users.COLABORADOR.id,
+          categoria.id,
+          'APROVADO',
+        );
+        await createReimbursement(users.COLABORADOR.id, categoria.id, 'PAGO');
+
+        const response = await request(app)
+          .get('/reimbursements/stats')
+          .set('Authorization', `Bearer ${tokenFor(users.FINANCEIRO)}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.aguardandoPagamento.count).toBe(2);
+        expect(response.body.pagas.count).toBe(1);
+      });
+
+      it('ADMIN vê todos os status', async () => {
+        const users = await createAllRoles();
+        const categoria = await createCategoria();
+
+        await createReimbursement(
+          users.COLABORADOR.id,
+          categoria.id,
+          'RASCUNHO',
+        );
+        await createReimbursement(users.COLABORADOR.id, categoria.id, 'PAGO');
+
+        const response = await request(app)
+          .get('/reimbursements/stats')
+          .set('Authorization', `Bearer ${tokenFor(users.ADMIN)}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.rascunho.count).toBe(1);
+        expect(response.body.pago.count).toBe(1);
+      });
+    });
   });
 });

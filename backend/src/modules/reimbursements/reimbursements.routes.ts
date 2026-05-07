@@ -23,6 +23,8 @@ router.use(authMiddleware);
 
 router.get('/', reimbursementsController.findMany);
 
+router.get('/stats', authMiddleware, reimbursementsController.getStats);
+
 router.get(
   '/:id',
   validate(reimbursementIdParamSchema, 'params'),

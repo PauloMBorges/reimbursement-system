@@ -83,3 +83,23 @@ export interface ApiError {
   issues?: Record<string, string[]>;
   formErrors?: string[];
 }
+
+export interface StatBucket {
+  count: number;
+  total: string;
+}
+
+// Cada perfil retorna estrutura diferente
+export type ReimbursementStats = {
+  rascunho?: StatBucket;
+  enviado?: StatBucket;
+  aprovado?: StatBucket;
+  rejeitado?: StatBucket;
+  pago?: StatBucket;
+  cancelado?: StatBucket;
+  aguardandoAnalise?: StatBucket;
+  aguardandoPagamento?: StatBucket;
+  aprovadas?: StatBucket;
+  rejeitadas?: StatBucket;
+  pagas?: StatBucket;
+};

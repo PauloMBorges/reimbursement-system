@@ -363,4 +363,78 @@ export const reimbursementsService = {
       return updated;
     });
   },
+
+  // DIFERENCIAL - Retorna estatísticas adaptadas ao perfil do usuário
+  // Cada perfil vê números sobre:
+  // - COLABORADOR: suas próprias solicitações por status
+  // - GESTOR: o que ele tem pra analisar + decisões tomadas
+  // - FINANCEIRO: o que precisa pagar + o que já pagou
+  // - ADMIN: visão geral do sistema
+  async getStats(user: ActingUser) {
+    const baseFilter =
+      user.perfil === 'COLABORADOR' ? { solicitanteId: user.id } : {};
+
+    // Agrupa solicitações por status, contando e somando valores
+    const groupedByStatus = await prisma.solicitacaoReembolso.groupBy({
+      by: ['status'],
+      where: baseFilter,
+      _count: { id: true },
+      _sum: { valor: true },
+    });
+
+    // Mapa { STATUS -> {count, total] } para acesso rápido
+    const statsMap = groupedByStatus.reduce(
+      (acc, group) => {
+        acc[group.status] = {
+          count: group._count.id,
+          total: group._sum.valor?.toString() ?? '0',
+        };
+        return acc;
+      },
+      {} as Record<string, { count: number; total: string }>,
+    );
+
+    // Helper para extrair com defaults
+    const get = (status: string) =>
+      statsMap[status] ?? { count: 0, total: '0' };
+
+    // Retorna apenas os cards relevantes ao perfil
+    switch (user.perfil) {
+      case 'COLABORADOR':
+        return {
+          rascunho: get('RASCUNHO'),
+          enviado: get('ENVIADO'),
+          aprovado: get('APROVADO'),
+          rejeitado: get('REJEITADO'),
+          pago: get('PAGO'),
+        };
+
+      case 'GESTOR': {
+        return {
+          aguardandoAnalise: get('ENVIADO'),
+          aprovadas: get('APROVADO'),
+          rejeitadas: get('REJEITADO'),
+          pagas: get('PAGO'),
+        };
+      }
+
+      case 'FINANCEIRO': {
+        return {
+          aguardandoPagamento: get('APROVADO'),
+          pagas: get('PAGO'),
+        };
+      }
+
+      case 'ADMIN':
+      default:
+        return {
+          rascunho: get('RASCUNHO'),
+          enviado: get('ENVIADO'),
+          aprovado: get('APROVADO'),
+          rejeitado: get('REJEITADO'),
+          pago: get('PAGO'),
+          cancelado: get('CANCELADO'),
+        };
+    }
+  },
 };

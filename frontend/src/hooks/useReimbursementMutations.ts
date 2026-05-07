@@ -6,6 +6,7 @@ import {
   type UpdateReimbursementPayload,
 } from '@/api/reimbursements.api';
 import { REIMBURSEMENTS_QUERY_KEY, reimbursementQueryKey } from './useReimbursements';
+import { STATS_QUERY_KEY } from './useStats';
 
 // Hook que expõe todas mutations de um reembolso
 // Cada mutation invalida as queries relacionadas para forçar refetch
@@ -25,6 +26,8 @@ export function useReimbursementMutations() {
     if (id) {
       await queryClient.refetchQueries({ queryKey: reimbursementQueryKey(id) });
     }
+    // Stats agregam contadores que mudam após qualquer mutação
+    await queryClient.refetchQueries({ queryKey: STATS_QUERY_KEY });
   }
 
   const create = useMutation({
