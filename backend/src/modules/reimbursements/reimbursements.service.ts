@@ -21,6 +21,7 @@ import {
   VALOR_LIMITE_SUBMISSAO_SEM_ANEXO,
 } from './reimbursements.state';
 import { Decimal } from '@prisma/client/runtime/library';
+import { sendNotification } from '@/shared/services/notifications.service';
 
 // Identidade do usuário autenticado (extraída do JWT pelo authMiddleware)
 // Usada em todos métodos que precisam saber quem está agindo
@@ -145,6 +146,69 @@ function assertCanView(
     }
     return;
   }
+}
+
+// DIFERENCIAL - mensagens de notific. por ação
+async function notifyTransition(
+  action: ReimbursementAction,
+  reimbursement: {
+    id: string;
+    descricao: string;
+    solicitanteId: string;
+    valor: Decimal;
+  },
+  actorId: string,
+) {
+  // Notificações apenas em ações que outro perfil faz com solicitação alheia
+  if (action !== 'APPROVE' && action !== 'REJECT' && action !== 'PAY') {
+    return;
+  }
+
+  // Busca nome do autor da ação
+  const actor = await prisma.usuario.findUnique({
+    where: { id: actorId },
+    select: { nome: true },
+  });
+  const actorName = actor?.nome ?? 'Usuário';
+
+  const valorFormatado = `R$ ${parseFloat(reimbursement.valor.toString())
+    .toFixed(2)
+    .replace('.', ',')}`;
+
+  const messages: Partial<
+    Record<
+      ReimbursementAction,
+      {
+        title: string;
+        message: string;
+        tags: string[];
+      }
+    >
+  > = {
+    APPROVE: {
+      title: 'Reembolso aprovado',
+      message: `Sua solicitação "${reimbursement.descricao}" (${valorFormatado}) foi aprovada por ${actorName}.`,
+      tags: ['white_check_mark'],
+    },
+    REJECT: {
+      title: 'Reembolso rejeitado',
+      message: `Sua solicitação "${reimbursement.descricao}" (${valorFormatado}) foi rejeitada por ${actorName}.`,
+      tags: ['x'],
+    },
+    PAY: {
+      title: 'Pagamento realizado',
+      message: `O pagamento da sua solicitação "${reimbursement.descricao}" (${valorFormatado}) foi efetuado por ${actorName}.`,
+      tags: ['moneybag'],
+    },
+  };
+
+  const config = messages[action];
+  if (!config) return;
+
+  sendNotification({
+    ...config,
+    priority: 4,
+  });
 }
 
 export const reimbursementsService = {
@@ -359,6 +423,10 @@ export const reimbursementsService = {
         acao: rule.historyAction,
         observacao: observacoes[action],
       });
+
+      // DIFERENCIAL - ntfy
+      // Notificação (não bloqueia retorno)
+      notifyTransition(action, updated, user.id);
 
       return updated;
     });

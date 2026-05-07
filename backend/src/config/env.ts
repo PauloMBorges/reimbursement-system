@@ -20,6 +20,9 @@ const envSchema = z.object({
 
   // Bcrypt
   BCRYPT_SALT_ROUNDS: z.coerce.number().int().min(8).max(15).default(10),
+
+  // NTFY
+  NTFY_TOPIC: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
