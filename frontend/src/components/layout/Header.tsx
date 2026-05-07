@@ -7,13 +7,19 @@ export function Header() {
   const { user, logout, hasRole } = useAuth();
   const isAdmin = hasRole('ADMIN');
 
-return (
-    <header className="border-b bg-background">
+
+  return (
+    <header className="border-b bg-background sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <Link to="/dashboard" className="flex items-center gap-2 font-semibold">
-            <Receipt className="h-5 w-5" />
-            <span>Sistema de Reembolsos</span>
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2.5 font-semibold group"
+          >
+            <div className="bg-pitang-red rounded-lg p-1.5 transition-transform group-hover:scale-105">
+              <Receipt className="h-4 w-4 text-white" />
+            </div>
+            <span className="text-base">Reembolsos</span>
           </Link>
 
           {isAdmin && (
@@ -23,21 +29,21 @@ return (
                 className={({ isActive }) =>
                   `px-3 py-1.5 rounded-md text-sm transition-colors ${
                     isActive
-                      ? 'bg-muted text-foreground font-medium'
-                      : 'text-muted-foreground hover:text-foreground'
+                      ? 'bg-pitang-red/10 text-pitang-red font-medium'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`
                 }
                 end
               >
-                Reembolsos
+                Solicitações
               </NavLink>
               <NavLink
                 to="/admin/categories"
                 className={({ isActive }) =>
                   `px-3 py-1.5 rounded-md text-sm transition-colors ${
                     isActive
-                      ? 'bg-muted text-foreground font-medium'
-                      : 'text-muted-foreground hover:text-foreground'
+                      ? 'bg-pitang-red/10 text-pitang-red font-medium'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`
                 }
               >
@@ -48,8 +54,8 @@ return (
                 className={({ isActive }) =>
                   `px-3 py-1.5 rounded-md text-sm transition-colors ${
                     isActive
-                      ? 'bg-muted text-foreground font-medium'
-                      : 'text-muted-foreground hover:text-foreground'
+                      ? 'bg-pitang-red/10 text-pitang-red font-medium'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`
                 }
               >
@@ -59,11 +65,12 @@ return (
           )}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium">{user?.nome}</p>
-            <p className="text-xs text-muted-foreground">{user?.perfil}</p>
+            <p className="text-sm font-medium leading-none">{user?.nome}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{user?.perfil}</p>
           </div>
+          <div className="h-8 w-px bg-border hidden sm:block" />
           <Button variant="ghost" size="sm" onClick={logout}>
             <LogOut className="h-4 w-4 mr-2" />
             Sair

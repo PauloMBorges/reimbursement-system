@@ -58,7 +58,8 @@ export function ReimbursementDetailPage() {
       </Button>
 
       {/* Cabeçalho com status, valor e ações */}
-      <Card>
+      <Card className="overflow-hidden">
+        <div className="h-1 bg-gradient-to-r from-pitang-red via-pitang-orange to-pitang-yellow" />
         <CardHeader>
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="space-y-1">

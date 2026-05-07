@@ -9,7 +9,7 @@ export function NewReimbursementButton() {
   if (!hasRole('COLABORADOR')) return null;
 
   return (
-    <Button asChild>
+    <Button asChild className="shadow-sm shadow-pitang-red/20">
       <Link to="/reimbursements/new">
         <Plus className="h-4 w-4 mr-2" />
         Nova solicitação

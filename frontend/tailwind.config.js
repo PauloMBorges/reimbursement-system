@@ -1,20 +1,29 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: ['class'],
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-  ],
+  darkMode: ["class"],
+content: [
+  './pages/**/*.{ts,tsx}',
+  './components/**/*.{ts,tsx}',
+  './app/**/*.{ts,tsx}',
+  './src/**/*.{ts,tsx}',
+],
   theme: {
     container: {
       center: true,
-      padding: '2rem',
-      screens: {
-        '2xl': '1400px',
-      },
+      padding: "2rem",
+      screens: { "2xl": "1400px" },
     },
     extend: {
       colors: {
+        // Cores customizadas Pitang
+        pitang: {
+          red: 'var(--pitang-red)',
+          'red-dark': 'var(--pitang-red-dark)',
+          orange: 'var(--pitang-orange)',
+          yellow: 'var(--pitang-yellow)',
+          green: 'var(--pitang-green)',
+        },
+        // Tokens semânticos shadcn
         border: 'var(--border)',
         input: 'var(--input)',
         ring: 'var(--ring)',
@@ -57,4 +66,4 @@ export default {
     },
   },
   plugins: [],
-};
+}
