@@ -68,7 +68,7 @@ describe('Fluxo completo: criar → enviar → aprovar → pagar', () => {
       .send({
         categoriaId: categoria.id,
         descricao: 'Despesa duvidosa',
-        valor: 500,
+        valor: 89.5,
         dataDespesa: '2026-04-15',
       });
     const reimbId = createResp.body.id;

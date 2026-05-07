@@ -9,6 +9,10 @@ import { useReimbursementMutations } from '@/hooks/useReimbursementMutations';
 import { useAuth } from '@/contexts/useAuth';
 import { getErrorMessage } from '@/api/http';
 import type { Reimbursement } from '@/types';
+import { useAttachments } from '@/hooks/useAttachments';
+
+// Espelha a regra de negócio do backend
+const VALOR_LIMITE_SEM_ANEXO = 100;
 
 interface ReimbursementActionsProps {
   reimbursement: Reimbursement;
@@ -100,6 +104,15 @@ export function ReimbursementActions({ reimbursement }: ReimbursementActionsProp
   const canPay = hasRole('FINANCEIRO') && status === 'APROVADO';
   const canCancel = isOwner && (status === 'RASCUNHO' || status === 'ENVIADO');
 
+  // Hook sempre chamado incondicionalmente (acima do early return)
+  // DIFERENCIAL - usado para validar se o reembolso exige anexo
+  const { data: anexos = [] } = useAttachments(reimbursement.id);
+
+  const valorNumerico = parseFloat(reimbursement.valor);
+  const exigeAnexo = valorNumerico > VALOR_LIMITE_SEM_ANEXO;
+  const temAnexo = anexos.length > 0;
+  const podeSubmeter = !exigeAnexo || temAnexo;
+
   // Se não há ação possível, não renderiza nada
   const hasAnyAction = canSubmit || canEdit || canApprove || canReject || canPay || canCancel;
 
@@ -122,10 +135,20 @@ export function ReimbursementActions({ reimbursement }: ReimbursementActionsProp
         )}
 
         {canSubmit && (
-          <Button onClick={() => setActiveDialog({ type: 'submit' })}>
-            <Send className="h-4 w-4 mr-2" />
-            Enviar para aprovação
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button
+              onClick={() => setActiveDialog({ type: 'submit' })}
+              disabled={!podeSubmeter}
+            >
+              <Send className="h-4 w-4 mr-2" />
+              Enviar para aprovação
+            </Button>
+            {!podeSubmeter && (
+              <p className="text-xs text-muted-foreground">
+                ⚠️ Anexo obrigatório para valores acima de R$ {VALOR_LIMITE_SEM_ANEXO},00
+              </p>
+            )}
+          </div>
         )}
 
         {canApprove && (

@@ -16,13 +16,14 @@ async function createReimbursement(
     | 'REJEITADO'
     | 'PAGO'
     | 'CANCELADO' = 'RASCUNHO',
+  overrides: { valor?: number } = {},
 ) {
   return prisma.solicitacaoReembolso.create({
     data: {
       solicitanteId,
       categoriaId,
       descricao: 'Teste',
-      valor: 100,
+      valor: overrides.valor ?? 100,
       dataDespesa: new Date('2026-04-01'),
       status,
     },
@@ -317,6 +318,135 @@ describe('Reimbursements - criação', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(3);
+    });
+  });
+
+  describe('Reimbursements - bloqueio de submissão sem anexo', () => {
+    it('permite SUBMIT quando valor é menor ou igual a R$ 100', async () => {
+      const users = await createAllRoles();
+      const categoria = await createCategoria();
+      const reimb = await createReimbursement(
+        users.COLABORADOR.id,
+        categoria.id,
+        'RASCUNHO',
+        { valor: 100 }, // exatamente o limite
+      );
+
+      const response = await request(app)
+        .post(`/reimbursements/${reimb.id}/submit`)
+        .set('Authorization', `Bearer ${tokenFor(users.COLABORADOR)}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.status).toBe('ENVIADO');
+    });
+
+    it('rejeita SUBMIT quando valor > R$ 100 e não há anexo', async () => {
+      const users = await createAllRoles();
+      const categoria = await createCategoria();
+      const reimb = await createReimbursement(
+        users.COLABORADOR.id,
+        categoria.id,
+        'RASCUNHO',
+        { valor: 150 },
+      );
+
+      const response = await request(app)
+        .post(`/reimbursements/${reimb.id}/submit`)
+        .set('Authorization', `Bearer ${tokenFor(users.COLABORADOR)}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/anexo/i);
+      expect(response.body.message).toMatch(/R\$ 100,00/);
+    });
+
+    it('permite SUBMIT quando valor > R$ 100 e há anexo', async () => {
+      const users = await createAllRoles();
+      const categoria = await createCategoria();
+      const reimb = await createReimbursement(
+        users.COLABORADOR.id,
+        categoria.id,
+        'RASCUNHO',
+        { valor: 150 },
+      );
+
+      // Cria anexo simulado
+      await prisma.anexo.create({
+        data: {
+          solicitacaoId: reimb.id,
+          nomeArquivo: 'comprovante.pdf',
+          urlArquivo: 'https://example.com/file.pdf',
+          tipoArquivo: 'PDF',
+        },
+      });
+
+      const response = await request(app)
+        .post(`/reimbursements/${reimb.id}/submit`)
+        .set('Authorization', `Bearer ${tokenFor(users.COLABORADOR)}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.status).toBe('ENVIADO');
+    });
+
+    describe('Reimbursements - limite por categoria', () => {
+      it('rejeita criação quando valor excede limite da categoria', async () => {
+        const users = await createAllRoles();
+        // Cria categoria com limite de R$ 100
+        const categoria = await prisma.categoria.create({
+          data: { nome: 'Pequenas despesas', valorMaximo: 100 },
+        });
+
+        const response = await request(app)
+          .post('/reimbursements')
+          .set('Authorization', `Bearer ${tokenFor(users.COLABORADOR)}`)
+          .send({
+            categoriaId: categoria.id,
+            descricao: 'Acima do limite',
+            valor: 150.0,
+            dataDespesa: '2026-04-01',
+          });
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toMatch(/excede o limite/i);
+        expect(response.body.message).toMatch(/R\$ 100,00/);
+      });
+
+      it('aceita criação quando valor está dentro do limite', async () => {
+        const users = await createAllRoles();
+        const categoria = await prisma.categoria.create({
+          data: { nome: 'Limitada', valorMaximo: 200 },
+        });
+
+        const response = await request(app)
+          .post('/reimbursements')
+          .set('Authorization', `Bearer ${tokenFor(users.COLABORADOR)}`)
+          .send({
+            categoriaId: categoria.id,
+            descricao: 'Dentro do limite',
+            valor: 150.0,
+            dataDespesa: '2026-04-01',
+          });
+
+        expect(response.status).toBe(201);
+      });
+
+      it('aceita qualquer valor quando categoria não tem limite', async () => {
+        const users = await createAllRoles();
+        const categoria = await prisma.categoria.create({
+          data: { nome: 'Sem limite', valorMaximo: null },
+        });
+
+        const response = await request(app)
+          .post('/reimbursements')
+          .set('Authorization', `Bearer ${tokenFor(users.COLABORADOR)}`)
+          .send({
+            categoriaId: categoria.id,
+            descricao: 'Qualquer valor',
+            valor: 9999.99,
+            dataDespesa: '2026-04-01',
+          });
+
+        expect(response.status).toBe(201);
+      });
     });
   });
 });

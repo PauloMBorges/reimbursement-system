@@ -15,7 +15,11 @@ import {
   CreateReimbursementInput,
   UpdateReimbursementInput,
 } from './reimbursements.schemas';
-import { ReimbursementAction, transitions } from './reimbursements.state';
+import {
+  ReimbursementAction,
+  transitions,
+  VALOR_LIMITE_SUBMISSAO_SEM_ANEXO,
+} from './reimbursements.state';
 import { Decimal } from '@prisma/client/runtime/library';
 
 // Identidade do usuário autenticado (extraída do JWT pelo authMiddleware)
@@ -302,6 +306,22 @@ export const reimbursementsService = {
     // 4. REJECT exige justificativa?
     if (action === 'REJECT' && !options?.justificativa) {
       throw new BadRequestError('Justificativa é obrigatória ao rejeitar');
+    }
+
+    // 5. DIFERENCIAL - SUBMIT acima do limite exige pelo menos um anexo
+    if (action === 'SUBMIT') {
+      const valorSolicitado = new Decimal(found.valor.toString());
+      if (valorSolicitado.greaterThan(VALOR_LIMITE_SUBMISSAO_SEM_ANEXO)) {
+        const totalAnexos = await prisma.anexo.count({
+          where: { solicitacaoId: id },
+        });
+        if (totalAnexos === 0) {
+          throw new BadRequestError(
+            `Solicitações acima de R$ ${VALOR_LIMITE_SUBMISSAO_SEM_ANEXO},00 ` +
+              `exigem pelo menos um anexo (comprovante) antes do envio.`,
+          );
+        }
+      }
     }
 
     // Executa update + histórico em transação

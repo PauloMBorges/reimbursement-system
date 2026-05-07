@@ -4,6 +4,9 @@ import {
   AcaoHistorico,
 } from '@prisma/client';
 
+// valor máximo de reembolso sem necessidade de anexo
+export const VALOR_LIMITE_SUBMISSAO_SEM_ANEXO = 100;
+
 // Tipos de ações que provocam transição de status
 // Cad ação corresponde a um endpoint específico
 
