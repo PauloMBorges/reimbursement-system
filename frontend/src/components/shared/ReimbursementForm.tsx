@@ -18,6 +18,7 @@ import {
   type ReimbursementFormInput,
 } from '@/lib/schemas/reimbursement.schema';
 import type { Reimbursement } from '@/types';
+import { formatCurrency } from '@/lib/format';
 
 interface ReimbursementFormProps {
   // Reembolso existente para prencher o form em modo edição
@@ -100,6 +101,11 @@ export function ReimbursementForm({
                 {activeCategorias.map((cat) => (
                   <SelectItem key={cat.id} value={cat.id}>
                     {cat.nome}
+                    {cat.valorMaximo && (
+                       <span className="ml-2 text-xs text-muted-foreground">
+                        (até {formatCurrency(cat.valorMaximo)})
+                      </span>
+                    )}
                   </SelectItem>
                 ))}
               </SelectContent>

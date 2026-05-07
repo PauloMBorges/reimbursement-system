@@ -16,6 +16,7 @@ import {
   UpdateReimbursementInput,
 } from './reimbursements.schemas';
 import { ReimbursementAction, transitions } from './reimbursements.state';
+import { Decimal } from '@prisma/client/runtime/library';
 
 // Identidade do usuário autenticado (extraída do JWT pelo authMiddleware)
 // Usada em todos métodos que precisam saber quem está agindo
@@ -45,6 +46,39 @@ async function logHistory(
       observacao: data.observacao,
     },
   });
+}
+
+// Valida categoria e limite de valor
+// Centraliza 3 regras: categoria existe, está ativa e valor não excede limite
+// Se a categoria nao tem valorMaximo definido, pula a validação de limite
+async function assertCategoryAndLimit(
+  categoriaId: string,
+  valor: number | Prisma.Decimal,
+) {
+  const categoria = await prisma.categoria.findUnique({
+    where: { id: categoriaId },
+  });
+
+  if (!categoria) {
+    throw new BadRequestError('Categoria não encontrada');
+  }
+  if (!categoria.ativo) {
+    throw new BadRequestError(
+      'Categoria está inativa e não pode ser usada em novas solicitações',
+    );
+  }
+
+  if (categoria.valorMaximo !== null) {
+    const valorSolicitado = new Decimal(valor.toString());
+    if (valorSolicitado.greaterThan(categoria.valorMaximo)) {
+      const limiteFmt = categoria.valorMaximo.toFixed(2).replace('.', ',');
+      throw new BadRequestError(
+        `Valor excede o limite da categoria "${categoria.nome}" (R$ ${limiteFmt})`,
+      );
+    }
+  }
+
+  return categoria;
 }
 
 // Determina quais status um perfil pode visualizar na listagem
@@ -121,20 +155,8 @@ export const reimbursementsService = {
       throw new ForbiddenError('Apenas colaboradores podem criar solicitações');
     }
 
-    // Categorria precisa existir e estar ativa
-    const categoria = await prisma.categoria.findUnique({
-      where: {
-        id: input.categoriaId,
-      },
-    });
-    if (!categoria) {
-      throw new BadRequestError('Categoria não encontrada');
-    }
-    if (!categoria.ativo) {
-      throw new BadRequestError(
-        'Categoria está inativa e não pode ser usada em novas solicitações',
-      );
-    }
+    // Valida a categoria
+    await assertCategoryAndLimit(input.categoriaId, input.valor);
 
     // Cria a solicitacão + histórico CREATED dentro de uma transação
     return prisma.$transaction(async (tx) => {
@@ -201,21 +223,11 @@ export const reimbursementsService = {
       );
     }
 
-    // Se a categoria está sendo alterada, precisa existir e estar ativa
-    if (input.categoriaId && input.categoriaId !== found.categoriaId) {
-      const categoria = await prisma.categoria.findUnique({
-        where: {
-          id: input.categoriaId,
-        },
-      });
-      if (!categoria) {
-        throw new BadRequestError('Categoria não encontrada');
-      }
-      if (!categoria.ativo) {
-        throw new BadRequestError(
-          'Categoria está inativa e não pode ser usada',
-        );
-      }
+    // Se a categoria ou valor está sendo alterada, revalida o limite
+    if (input.categoriaId !== undefined || input.valor !== undefined) {
+      const categoriaId = input.categoriaId ?? found.categoriaId;
+      const valor = input.valor ?? found.valor;
+      await assertCategoryAndLimit(categoriaId, valor);
     }
 
     // Atualiza dados da solicitação

@@ -10,6 +10,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { useCategoryMutations } from '@/hooks/useCategoryMutations';
 import { getErrorMessage } from '@/api/http';
 import type { Categoria } from '@/types';
+import { formatCurrency } from '@/lib/format';
 
 export function CategoriesPage() {
     const { data: categories, isLoading, error } = useCategories();
@@ -98,6 +99,7 @@ export function CategoriesPage() {
               <thead className="bg-muted/50 border-b">
                 <tr className="text-left text-sm text-muted-foreground">
                   <th className="px-4 py-3 font-medium">Nome</th>
+                  <th className="px-4 py-3 font-medium">Limite</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium w-32 text-right">Ações</th>
                 </tr>
@@ -109,6 +111,13 @@ export function CategoriesPage() {
                     className="border-b last:border-b-0 hover:bg-muted/30 transition-colors"
                   >
                     <td className="px-4 py-3 text-sm font-medium">{cat.nome}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {cat.valorMaximo ? (
+                        formatCurrency(cat.valorMaximo)
+                      ) : (
+                        <span className="text-muted-foreground">Sem limite</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-sm">
                       {cat.ativo ? (
                         <span className="text-green-700">Ativa</span>

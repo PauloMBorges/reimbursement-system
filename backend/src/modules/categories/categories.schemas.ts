@@ -9,6 +9,11 @@ export const createCategorySchema = z.object({
     .min(2, 'Nome deve ter no mínimo 2 caracteres')
     .max(50, 'Nome deve ter no máximo 50 caracteres')
     .trim(),
+  valorMaximo: z
+    .number()
+    .positive('O valor máximo deve ser positivo')
+    .nullable()
+    .optional(),
 });
 
 // Schema para atualização de categoria
@@ -26,6 +31,11 @@ export const updateCategorySchema = z
       .trim()
       .optional(),
     ativo: z.boolean().optional(),
+    valorMaximo: z
+      .number()
+      .positive('O valor máximo deve ser positivo')
+      .nullable()
+      .optional(),
   })
   .refine((data) => data.nome !== undefined || data.ativo !== undefined, {
     message: 'Informe ao menos um campo para atualizar (nome ou ativo)',

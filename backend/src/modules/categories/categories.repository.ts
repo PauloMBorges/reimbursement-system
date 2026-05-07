@@ -1,4 +1,5 @@
 import { prisma } from '@/config/prisma';
+import { CreateCategoryInput, UpdateCategoryInput } from './categories.schemas';
 
 // Camada de acesso a dados de categorias
 // Centraliza todas as queries relacionadas a tabela 'categorias'
@@ -20,13 +21,13 @@ export const categoriesRepository = {
     return prisma.categoria.findUnique({ where: { nome } });
   },
   // Cria uma nova categoria
-  async create(data: { nome: string }) {
+  async create(data: CreateCategoryInput) {
     return prisma.categoria.create({ data });
   },
 
   // Modifica os dados de uma categoria existente (nome ou status de ativação)
   // Sem delete (Soft Delete, apenas atualiza o status para inativo)
-  async update(id: string, data: { nome?: string; ativo?: boolean }) {
+  async update(id: string, data: UpdateCategoryInput) {
     return prisma.categoria.update({
       where: { id },
       data,

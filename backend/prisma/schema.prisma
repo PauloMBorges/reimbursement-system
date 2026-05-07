@@ -70,6 +70,7 @@ model Categoria {
     ativo        Boolean  @default(true)
     criadoEm     DateTime @default(now())
     atualizadoEm DateTime @updatedAt
+    valorMaximo  Decimal? @db.Decimal(12, 2)
 
     solicitacoes SolicitacaoReembolso[]
 

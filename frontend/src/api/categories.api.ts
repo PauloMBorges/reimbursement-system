@@ -3,11 +3,13 @@ import type { Categoria } from '@/types';
 
 export interface CreateCategoryPayload {
   nome: string;
+  valorMaximo: number | null;
 }
 
 export interface UpdateCategoryPayload {
   nome?: string;
   ativo?: boolean;
+  valorMaximo?: number | null;
 }
 
 export const categoriesApi = {

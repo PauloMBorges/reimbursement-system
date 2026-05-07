@@ -12,13 +12,13 @@ export const categoriesService = {
   // Recebe nome que o usuário quer dar para categoria
   // Repository verifica no banco se nome já existe
   // Não confiar só no @unique do Prisma (voltaria como erro 500)
-  async create({ nome }: CreateCategoryInput) {
-    const existente = await categoriesRepository.findByName(nome);
+  async create(input: CreateCategoryInput) {
+    const existente = await categoriesRepository.findByName(input.nome);
     if (existente) {
       throw new BadRequestError('Já existe uma categoria com este nome');
     }
 
-    return categoriesRepository.create({ nome });
+    return categoriesRepository.create(input);
   },
 
   // Atualiza categoria

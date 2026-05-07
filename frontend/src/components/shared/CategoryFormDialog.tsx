@@ -46,23 +46,30 @@ export function CategoryFormDialog({
     formState: { errors },
   } = useForm<CategoryFormInput>({
     resolver: zodResolver(categoryFormSchema),
-    defaultValues: { nome: '' },
+    defaultValues: { nome: '', valorMaximo: '' },
   });
 
   // Reseta o formulário quando o dialog abre/fecha ou quando muda a categoria
   useEffect(() => {
     if (open) {
-      reset({ nome: category?.nome ?? '' });
+      reset({ 
+        nome: category?.nome ?? '', 
+        valorMaximo: category?.valorMaximo 
+          ? String(category.valorMaximo).replace('.', ',') : '', });
     }
   }, [open, category, reset]);
 
   async function onSubmit(data: CategoryFormInput) {
     try {
+      // Converte valorMaximo: string vazia ou undefined → null, senão parseFloat
+      const valorMaximo = data.valorMaximo
+                ? parseFloat(data.valorMaximo.replace(',', '.'))
+                : null;
       if (isEditing && category) {
-        await update.mutateAsync({ id: category.id, payload: data });
+        await update.mutateAsync({ id: category.id, payload: {nome: data.nome, valorMaximo} });
         toast.success('Categoria atualizada');
       } else {
-        await create.mutateAsync(data);
+        await create.mutateAsync({ nome: data.nome, valorMaximo });
         toast.success('Categoria criada');
       }
       onOpenChange(false);
@@ -96,6 +103,23 @@ export function CategoryFormDialog({
             />
             {errors.nome && <FieldError>{errors.nome.message}</FieldError>}
           </Field>
+
+          <Field>
+            <FieldLabel htmlFor="valorMaximo">
+              Valor máximo <span className="text-muted-foreground text-xs">(opcional)</span>
+            </FieldLabel>
+            <Input
+              id="valorMaximo"
+              type="text"
+              placeholder="Ex: 200,00 (deixe vazio para sem limite)"
+              {...register('valorMaximo')}
+            />
+            {errors.valorMaximo && <FieldError>{errors.valorMaximo.message}</FieldError>}
+            <p className="text-xs text-muted-foreground mt-1">
+              Solicitações nessa categoria não poderão exceder esse valor
+            </p>
+          </Field>
+
           <DialogFooter className="gap-2 sm:gap-2">
             <Button
               type="button"

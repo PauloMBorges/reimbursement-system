@@ -14,12 +14,13 @@ async function main() {
   // Categorias iniciais
 
   const categorias = [
-    { nome: 'Alimentação' },
-    { nome: 'Transporte' },
-    { nome: 'Hospedagem' },
-    { nome: 'Treinamento e Cursos' },
-    { nome: 'Material de escritório' },
-    { nome: 'Outros' },
+    { nome: 'Alimentação', valorMaximo: 300 },
+    { nome: 'Transporte', valorMaximo: null },
+    { nome: 'Hospedagem', valorMaximo: 1500 },
+    { nome: 'Treinamento e Cursos', valorMaximo: 500 },
+    { nome: 'Material de escritório', valorMaximo: null },
+    { nome: 'Software e Assinaturas', valorMaximo: null },
+    { nome: 'Outros', valorMaximo: null },
   ];
 
   // Insere ou atualiza categorias

@@ -38,6 +38,7 @@ export interface Categoria {
   ativo: boolean;
   criadoEm: string;
   atualizadoEm: string;
+  valorMaximo: string | null;
 }
 
 export interface Reimbursement {
