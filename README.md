@@ -21,35 +21,35 @@ Sistema fullstack para gestão de solicitações de reembolso com controle de fl
 
 ### Backend
 
-- **Node.js + Express** — servidor HTTP
-- **TypeScript** — tipagem estática estrita
-- **Prisma ORM** — acesso ao banco
-- **PostgreSQL 16** — banco relacional
-- **Zod** — validação de schemas em runtime
-- **JWT** — autenticação stateless
-- **bcryptjs** — hash de senhas
-- **Jest + Supertest** — testes de integração
+- **Node.js + Express** - servidor HTTP
+- **TypeScript** - tipagem estática estrita
+- **Prisma ORM** - acesso ao banco
+- **PostgreSQL 16** - banco relacional
+- **Zod** - validação de schemas em runtime
+- **JWT** - autenticação stateless
+- **bcryptjs** - hash de senhas
+- **Jest + Supertest** - testes de integração
 
 ### Frontend
 
-- **Vite 8 + React 19** — bundler moderno e UI
-- **TypeScript** — tipagem estrita
-- **TanStack Query** — estado de servidor
-- **Context API** — estado de cliente (autenticação)
-- **React Router 7** — roteamento client-side
-- **React Hook Form + Zod** — formulários
-- **Tailwind CSS + shadcn/ui** — design system
-- **Vitest + Testing Library** — testes de componentes
+- **Vite 8 + React 19** - bundler moderno e UI
+- **TypeScript** - tipagem estrita
+- **TanStack Query** - estado de servidor
+- **Context API** - estado de cliente (autenticação)
+- **React Router 7** - roteamento client-side
+- **React Hook Form + Zod** - formulários
+- **Tailwind CSS + shadcn/ui** - design system
+- **Vitest + Testing Library** - testes de componentes
 
 ### Infraestrutura
 
-- **Docker Compose** — Postgres em container
-- **dotenv** — variáveis de ambiente
+- **Docker Compose** - Postgres em container
+- **dotenv** - variáveis de ambiente
 
 ### Integrações externas
 
-- **BrasilAPI** — feriados nacionais
-- **ntfy.sh** — notificações push (push-as-a-service)
+- **BrasilAPI** - feriados nacionais
+- **ntfy.sh** - notificações push
 
 ---
 
@@ -200,7 +200,7 @@ Para testar o diferencial de notificações:
 4. Reinicie o backend
 5. Aprove uma solicitação como gestor → push chega no celular
 
-## Sem `NTFY_TOPIC` configurado, o sistema funciona normalmente sem enviar notificações.
+Sem `NTFY_TOPIC` configurado, o sistema funciona normalmente sem enviar notificações.
 
 ## Estrutura do projeto
 
@@ -342,14 +342,6 @@ GET    /reimbursements/:id/history            # autenticado
 GET    /reimbursements/:id/attachments        # autenticado
 POST   /reimbursements/:id/attachments        # dono em RASCUNHO
 ```
-
-### Health check
-
-```
-GET /health
-→ 200 { "status": "ok", "uptime": ... }
-```
-
 ---
 
 ## Autor
