@@ -1,4 +1,4 @@
-# Frontend — Sistema de Reembolsos
+# Frontend - Sistema de Reembolsos
 
 SPA React/TypeScript que consome a API do backend.
 
@@ -40,28 +40,6 @@ App em http://localhost:5173.
 | `npm run test:coverage` | Gera relatório de cobertura         |
 | `npm run test:ui`       | Interface visual dos testes         |
 
-## Estrutura de pastas
-```
-src/
-├── api/              # Clientes Axios por domínio
-├── components/
-│   ├── layout/       # Header, AppLayout
-│   ├── shared/       # Componentes do projeto (PrivateRoute, StatusBadge, etc.)
-│   └── ui/           # Componentes shadcn/ui (não modifique direto)
-├── contexts/         # AuthContext (auth-context.ts, AuthContext.tsx, useAuth.ts)
-├── hooks/            # Custom hooks com TanStack Query
-├── lib/
-│   ├── format.ts     # Formatadores (currency, date)
-│   ├── utils.ts      # cn() do shadcn
-│   └── schemas/      # Schemas Zod
-├── pages/            # Páginas da aplicação
-├── types/            # Tipos compartilhados (espelham API)
-├── App.tsx           # BrowserRouter > AuthProvider > Routes
-├── main.tsx
-├── index.css
-└── routes.tsx
-tests/                # 25 testes Vitest + Testing Library
-```
 
 ## Adicionando componentes shadcn/ui
 
@@ -79,9 +57,3 @@ Ex: `npx shadcn@latest add tooltip`. Os arquivos vão pra `src/components/ui/`.
 
 > Variáveis Vite precisam do prefixo `VITE_` para serem expostas ao cliente.
 
-## Convenções
-
-- **Imports absolutos via alias `@/`:** `import { Button } from '@/components/ui/button'` (configurado em `vite.config.ts` e `tsconfig.app.json`)
-- **`Record<EnumType, ...>` em mapas exhaustivos:** TypeScript força mapeamento completo
-- **Componentes "burros" + páginas "espertas":** componentes em `shared/` recebem props/callbacks; páginas em `pages/` integram com hooks e roteamento
-- **TanStack Query com chaves hierárquicas:** `['reimbursements', id, 'history']` permite invalidação em cascata
