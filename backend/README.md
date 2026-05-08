@@ -1,4 +1,4 @@
-# Backend — Sistema de Controle de Reembolsos
+# Backend - Sistema de Controle de Reembolsos
 
 API REST para gerenciamento de solicitações de reembolso, com controle de acesso por perfil (RBAC), trilha de auditoria e validação rigorosa de regras de negócio.
 
