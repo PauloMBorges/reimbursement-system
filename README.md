@@ -7,13 +7,13 @@ Sistema fullstack para gestão de solicitações de reembolso com controle de fl
 ## Sumário
 
 - [Stack](#stack)
-- [Funcionalidades](#funcionalidades)
+- [Funcionalidades principais](#funcionalidades-principais)
+- [Diferenciais implementados](#diferenciais-implementados)
 - [Como rodar](#como-rodar)
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Decisões arquiteturais](#decisões-arquiteturais)
 - [Testes](#testes)
 - [Documentação da API](#documentação-da-api)
-- [Diferenciais implementados](#diferenciais-implementados)
 
 ---
 
@@ -23,32 +23,37 @@ Sistema fullstack para gestão de solicitações de reembolso com controle de fl
 
 - **Node.js + Express** — servidor HTTP
 - **TypeScript** — tipagem estática estrita
-- **Prisma ORM** — acesso ao banco de dados
+- **Prisma ORM** — acesso ao banco
 - **PostgreSQL 16** — banco relacional
 - **Zod** — validação de schemas em runtime
-- **JWT (jsonwebtoken)** — autenticação stateless
+- **JWT** — autenticação stateless
 - **bcryptjs** — hash de senhas
 - **Jest + Supertest** — testes de integração
 
 ### Frontend
 
 - **Vite 8 + React 19** — bundler moderno e UI
-- **TypeScript** — mesma tipagem estrita do backend
-- **TanStack Query** — gestão de estado de servidor
-- **Context API** — gestão de estado de cliente (autenticação)
+- **TypeScript** — tipagem estrita
+- **TanStack Query** — estado de servidor
+- **Context API** — estado de cliente (autenticação)
 - **React Router 7** — roteamento client-side
-- **React Hook Form + Zod** — formulários com validação
+- **React Hook Form + Zod** — formulários
 - **Tailwind CSS + shadcn/ui** — design system
 - **Vitest + Testing Library** — testes de componentes
 
 ### Infraestrutura
 
 - **Docker Compose** — Postgres em container
-- **dotenv** — gestão de variáveis de ambiente
+- **dotenv** — variáveis de ambiente
+
+### Integrações externas
+
+- **BrasilAPI** — feriados nacionais
+- **ntfy.sh** — notificações push (push-as-a-service)
 
 ---
 
-## Funcionalidades
+## Funcionalidades principais
 
 ### Autenticação e autorização
 
@@ -63,10 +68,7 @@ Sistema fullstack para gestão de solicitações de reembolso com controle de fl
 - Edição apenas em RASCUNHO pelo dono
 - Anexos (URL externa) em RASCUNHO
 - Visibilidade automática por perfil:
-  - COLABORADOR: apenas próprias
-  - GESTOR: tudo que saiu de RASCUNHO
-  - FINANCEIRO: APROVADO e PAGO
-  - ADMIN: todas
+- Histórico imutável de ações
 
 ### Máquina de estados
 
@@ -90,12 +92,30 @@ Transições disponíveis por perfil:
 - Linha do tempo automática de eventos por solicitação
 - Cada transição registra autor, ação, observação opcional e timestamp
 
-### Administração
+### Administração (ADMIN)
 
 - Cadastro de usuários (com escolha de perfil)
 - CRUD de categorias com soft delete (ativar/desativar)
+- Limites de valor por categoria
 
 ---
+
+### Diferenciais implementados
+
+| Diferencial                                     | Onde                                                                                                                                                                                                               |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ✅ **Bloqueio de despesas futuras**             | Schema Zod (back e front) com `.refine()` validando que `dataDespesa <= hoje`. Defesa em 3 camadas: HTML5 `max`, Zod frontend, Zod backend                                                                         |
+| ✅ **Limite de valor por categoria**            | Campo `valorMaximo Decimal?` em Categoria. Validação no service de criação/edição. Dropdown mostra "(até R$ X,XX)". Admin edita no CRUD de categoria                                                               |
+| ✅ **Bloqueio de submissão sem anexo > R$ 100** | Validação na transição SUBMIT do `executeTransition`. UI desabilita botão preventivamente                                                                                                                          |
+| ✅ **Dashboard com totais**                     | Endpoint `GET /reimbursements/stats` com `prisma.groupBy()`. Cards adaptados por perfil: COLABORADOR vê próprias por status, GESTOR vê o que tem pra decidir, FINANCEIRO vê fluxo financeiro, ADMIN vê visão geral |
+| ✅ **Soft delete**                              | Categorias com flag `ativo`. Não exclui fisicamente, preserva integridade referencial                                                                                                                              |
+| ✅ **Seeds iniciais**                           | `backend/prisma/seed.ts` cria 4 usuários (1 por perfil) e 5 categorias (3 com limite, 2 sem)                                                                                                                       |
+| ✅ **Collection Postman**                       | `docs/postman_collection.json` + `docs/postman_environment.json` com tokens prontos por perfil                                                                                                                     |
+| ✅ **Testes automatizados backend**             | 46 testes Jest + Supertest com banco isolado (`reimbursement_db_test`), executando em ~5s                                                                                                                          |
+| ✅ **Testes automatizados frontend**            | 25 testes Vitest + Testing Library cobrindo componentes críticos                                                                                                                                                   |
+| ✅ **Docker Compose**                           | Postgres em container, isolado e reproduzível                                                                                                                                                                      |
+| ✅ **Notificações push (ntfy)**                 | Endpoint configurável `NTFY_TOPIC` no .env. Notifica solicitante em APPROVE/REJECT/PAY. Falha de ntfy não quebra a transição                                                                                       |
+| ✅ **Integração com API externa**               | BrasilAPI consultada para detectar feriados nacionais. Alerta visual abaixo do datepicker quando data selecionada é feriado                                                                                        |
 
 ## Como rodar
 
@@ -170,7 +190,17 @@ Todos os usuários têm a senha `senha123`:
 | `gestor@pitang.com`      | GESTOR      |
 | `financeiro@pitang.com`  | FINANCEIRO  |
 
----
+### 5. (Opcional) Notificações push
+
+Para testar o diferencial de notificações:
+
+1. Instale o app **ntfy** no celular (gratuito)
+2. Subscreva a um tópico único (ex: `meu-app-reembolsos-9k3m`)
+3. Defina `NTFY_TOPIC=meu-app-reembolsos-9k3m` no `backend/.env`
+4. Reinicie o backend
+5. Aprove uma solicitação como gestor → push chega no celular
+
+## Sem `NTFY_TOPIC` configurado, o sistema funciona normalmente sem enviar notificações.
 
 ## Estrutura do projeto
 
@@ -178,7 +208,7 @@ Todos os usuários têm a senha `senha123`:
 reimbursement-system/
 ├── backend/                  # API REST
 │   ├── prisma/
-│   │   ├── schema.prisma     # modelo de dados
+│   │   ├── schema.prisma     # modelo de dados em PT com @@map snake_case
 │   │   ├── migrations/
 │   │   └── seed.ts           # dados iniciais
 │   ├── src/
@@ -191,26 +221,31 @@ reimbursement-system/
 │   │   │   ├── reimbursements/
 │   │   │   ├── history/
 │   │   │   └── attachments/
-│   │   ├── shared/           # erros, tipos, utils
-│   │   ├── app.ts            # configuração Express
-│   │   └── server.ts         # entry point
-│   ├── tests/                # 36 testes de integração
+│   │   ├── shared/           # erros, services compartilhados
+│   │   ├── app.ts
+│   │   └── server.ts
+│   ├── tests/                # 46 testes de integração
 │   └── docker-compose.yml
 │
 ├── frontend/                 # SPA React
 │   ├── src/
-│   │   ├── api/              # clientes Axios
+│   │   ├── api/              # clientes Axios por domínio
 │   │   ├── components/
 │   │   │   ├── layout/       # Header, AppLayout
 │   │   │   ├── shared/       # componentes do projeto
-│   │   │   └── ui/           # shadcn/ui
+│   │   │   └── ui/           # shadcn/ui (não modificar)
 │   │   ├── contexts/         # AuthContext
 │   │   ├── hooks/            # custom hooks (TanStack Query)
 │   │   ├── lib/
 │   │   │   ├── format.ts     # formatadores
+│   │   │   ├── utils.ts      # utilitário cn() do shadcn
 │   │   │   └── schemas/      # schemas Zod
-│   │   ├── pages/            # páginas
-│   │   └── types/            # tipos compartilhados
+│   │   ├── pages/
+│   │   ├── types/
+│   │   ├── App.tsx           # entrada principal e configuração de Providers
+│   │   ├── index.css         # estilos globais e variáveis do Tailwind
+│   │   ├── main.tsx          # ponto de montagem (render) do React
+│   │   └── routes.tsx        # definições do React Router
 │   ├── tests/                # 25 testes de componentes
 │   └── vitest.config.ts
 │
@@ -221,35 +256,9 @@ reimbursement-system/
 
 ---
 
-## Decisões arquiteturais
-
-### Backend
-
-- **Modelagem em português** com `@@map` para snake_case no banco. Espelha o domínio de negócio brasileiro.
-- **Decimal(12,2) para valores monetários:** `float` tem imprecisão; `Decimal` mantém centavos exatos.
-- **Máquina de estados em arquivo separado** (`reimbursements.state.ts`) com `Record<Action, TransitionRule>`. TypeScript força mapear toda ação possível.
-- **Transições atômicas** via `prisma.$transaction`: update do status + entrada no histórico ou nada.
-- **Visibilidade por perfil aplicada no service** (não nos clientes). Frontend não precisa filtrar — backend já retorna apenas o que cada perfil pode ver.
-- **bcryptjs em vez de bcrypt** por portabilidade no Windows.
-
-### Frontend
-
-- **Vite em vez de Create React App:** CRA está deprecado oficialmente.
-- **TanStack Query para estado de servidor + Context API para estado de cliente:** dois tipos de estado têm soluções diferentes. Auth é cliente; listas e detalhes são servidor.
-- **shadcn/ui (componentes copiados, não importados):** controle total sobre o código, sem dependência de pacote.
-- **Defesa em camada:** RBAC implementado tanto no UI (esconde botões) quanto no backend (valida requisições). UI é UX; backend é segurança.
-- **`Record<EnumType, ...>` em mapas exhaustivos:** TypeScript força mapeamento de todos os casos de status, ação, perfil. Adicionar valor novo no enum quebra o build, alertando que todos os mapas precisam ser atualizados.
-
-### Compartilhadas
-
-- **Validação Zod no backend e no frontend:** schemas espelham contratos. Frontend valida antes de enviar; backend re-valida sempre.
-- **Mensagens de erro padronizadas:** `{ message, statusCode, error, issues, formErrors }` — frontend tem helper único `getErrorMessage` pra extrair texto amigável.
-
----
-
 ## Testes
 
-### Backend (36 testes em ~4s)
+### Backend (46 testes em ~4s)
 
 ```bash
 cd backend
@@ -266,7 +275,7 @@ Suites:
 - `smoke` (2): infraestrutura
 - `auth` (8): login, validação, middleware
 - `categories` (8): CRUD com RBAC
-- `reimbursements` (16): criação, transições válidas/inválidas, RBAC, visibilidade
+- `reimbursements` (24): CRUD, transições, RBAC, visibilidade, limite por categoria, bloqueio sem anexo, stats
 - `integration-flow` (2): ciclos completos (aprovação e rejeição)
 
 **Estratégia:** integração com banco real isolado (`reimbursement_db_test`). Cada teste sobe o app inteiro com Supertest e valida comportamento observável (status codes, payloads, persistência).
@@ -343,12 +352,6 @@ GET /health
 
 ---
 
-## Diferenciais implementados
-
-[A ser preenchido]
-
----
-
 ## Autor
 
-Paulo Borges
+Paulo de Melo Borges
