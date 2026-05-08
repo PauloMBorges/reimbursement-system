@@ -125,15 +125,3 @@ npm run test:setup
 | `npm run test:ci` | Setup + coverage em um comando (recomendado) |
 
 Após `npm run test:coverage`, o relatório HTML fica em `coverage/lcov-report/index.html`.
-
-### Cobertura
-
-A suite atual tem **36 testes** de integração distribuídos em 5 suites:
-
-- `auth.test.ts` (8) — login, validação Zod, middleware de autenticação
-- `categories.test.ts` (8) — CRUD com RBAC
-- `reimbursements.test.ts` (16) — CRUD, transições válidas/inválidas, RBAC, visibilidade
-- `integration-flow.test.ts` (2) — ciclos completos (aprovação e rejeição)
-- `smoke.test.ts` (2) — saúde da infraestrutura
-
-Os testes priorizam **comportamento observável** (status codes, payloads, persistência) sobre detalhes de implementação.
