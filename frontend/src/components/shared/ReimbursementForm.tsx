@@ -1,4 +1,4 @@
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ import {
 } from '@/lib/schemas/reimbursement.schema';
 import type { Reimbursement } from '@/types';
 import { formatCurrency } from '@/lib/format';
+import { HolidayHint } from './HolidayHint';
 
 interface ReimbursementFormProps {
   // Reembolso existente para prencher o form em modo edição
@@ -75,6 +76,8 @@ export function ReimbursementForm({
   const activeCategorias = categorias?.filter((c) => c.ativo) ?? [];
   const currentCategoria = categorias?.find((c) => c.id === initialData?.categoriaId);
   const showInactiveCurrent = currentCategoria && !currentCategoria.ativo && initialData;
+
+  const dataDespesa = useWatch({ control, name: 'dataDespesa' });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -139,6 +142,8 @@ export function ReimbursementForm({
           {...register('dataDespesa')}
         />
         {errors.dataDespesa && <FieldError>{errors.dataDespesa.message}</FieldError>}
+        {/* DIFERENCIAL - Mostra alerta visual quando a data selecionada coincide com feriado nacional */}
+        <HolidayHint date={dataDespesa} />
       </Field>
 
       <Field>
